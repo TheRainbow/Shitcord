@@ -25,7 +25,7 @@ import shitcord
 import logging
 
 logger = logging.getLogger(__name__)
-api = shitcord.API('Token')
+api = shitcord.API("Token")
 
 # Some variables we need for a request.
 channel_id = 12345678901234
