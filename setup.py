@@ -24,7 +24,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/itsVale/Shitcord',
     license='GNU General Public License v3 (GPLv3)',
-    packages=['shitcord'],
+    packages=['shitcord', 'shitcord.http'],
     include_package_data=True,
     install_requires=requirements,
     extra_requires=extra_requires,
