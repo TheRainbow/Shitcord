@@ -12,7 +12,7 @@ class ShitRequestFailedError(Exception):
         self.errors = None
         self.message = None
 
-        self.failed = 'Your shit {0.bucket} failed with code {0.status_code}: {0.message}'
+        self.failed = 'Your shit {0.bucket} failed with code {0.status_code} (HTTP code {0.response.status_code}): {0.message}'
         if retries:
             self.failed += ' after fucking {} retries!'.format(retries)
 
