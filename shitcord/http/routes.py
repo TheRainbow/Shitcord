@@ -79,15 +79,15 @@ class Endpoints:
     GROUP_DM_REMOVE_RECIPIENT         = (Methods.DELETE, CHANNEL + '/recipients/{user}')
 
     # Audit Log
-    GET_GUILD_AUDIT_LOG               = (Methods.GET, GUILD + '/audit-logs')
+    GET_GUILD_AUDIT_LOG               = (Methods.GET, GUILD + '/{guild}/audit-logs')
 
     # Emoji
     EMOJI                             = '/emojis'
-    LIST_GUILD_EMOJIS                 = (Methods.GET, GUILD + EMOJI)
-    GET_GUILD_EMOJI                   = (Methods.GET, GUILD + EMOJI + '/{emoji}')
-    CREATE_GUILD_EMOJI                = (Methods.POST, GUILD + EMOJI)
-    MODIFY_GUILD_EMOJI                = (Methods.PATCH, GUILD + EMOJI + '/{emoji}')
-    DELETE_GUILD_EMOJI                = (Methods.DELETE, GUILD + EMOJI + '/{emoji}')
+    LIST_GUILD_EMOJIS                 = (Methods.GET, GUILD + '/{guild}' + EMOJI)
+    GET_GUILD_EMOJI                   = (Methods.GET, GUILD + '/{guild}' + EMOJI + '/{emoji}')
+    CREATE_GUILD_EMOJI                = (Methods.POST, GUILD + '/{guild}' + EMOJI)
+    MODIFY_GUILD_EMOJI                = (Methods.PATCH, GUILD + '/{guild}' + EMOJI + '/{emoji}')
+    DELETE_GUILD_EMOJI                = (Methods.DELETE, GUILD + '/{guild}' + EMOJI + '/{emoji}')
 
     # Invite
     INVITE                            = '/invites/{invite}'
@@ -107,14 +107,14 @@ class Endpoints:
     GET_USER_CONNECTIONS              = (Methods.GET, USER + '/@me/connections')
 
     # Voice
-    VOICE                             = '/voice'
-    LIST_VOICE_REGIONS                = (Methods.GET, VOICE + '/regions')
+    VOICE                             = '/voice/regions'
+    LIST_VOICE_REGIONS                = (Methods.GET, VOICE)
 
     # Webhook
     WEBHOOK                           = '/webhooks/{webhook}'
     CREATE_WEBHOOK                    = (Methods.POST, CHANNEL + '/webhooks')
     GET_CHANNEL_WEBHOOKS              = (Methods.GET, CHANNEL + '/webhooks')
-    GET_GUILD_WEBHOOKS                = (Methods.GET, GUILD + '/webhooks')
+    GET_GUILD_WEBHOOKS                = (Methods.GET, GUILD + '/{guild}/webhooks')
     GET_WEBHOOK                       = (Methods.GET, WEBHOOK)
     GET_WEBHOOK_WITH_TOKEN            = (Methods.GET, WEBHOOK + '/{token}')
     MODIFY_WEBHOOK                    = (Methods.PATCH, WEBHOOK)
