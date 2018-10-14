@@ -18,6 +18,7 @@ matrix:
 
 install:
   - pip install -U -r requirements.txt
+  - pip install -U pylava
 
 script:
   - pylava
