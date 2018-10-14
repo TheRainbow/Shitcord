@@ -15,6 +15,9 @@ pip install -U https://github.com/itsVale/Shitcord/archive/dev.zip
 ```
 
 No documentation yet since the available code is not intended to be used by everyone.  
+It requires you to read the source code to understand how the library works. At the moment it's just
+a client to interact with the REST API. If there is an "official" client to interact with the REST API
+and the Gateway, then there will be docs added.
 
 # Usage
 ```python
