@@ -33,4 +33,4 @@ api.create_message(channel_id, content)
 ```
 
 # Support
-Need help with something or just want to hang out with more or less cool guys? [Join our cool Discord server!](https://discord.gg/HbKGrVTy)
+Need help with something or just want to hang out with more or less cool guys? [Join our cool Discord server!](https://discord.gg/HbKGrVT)
