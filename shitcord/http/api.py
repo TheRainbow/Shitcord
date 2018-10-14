@@ -152,7 +152,7 @@ class API:
     def get_guild_member(self, guild_id, user_id):
         return self.make_request(Endpoints.GET_GUILD_MEMBER, dict(guild=guild_id, user=user_id))
 
-    def list_guild_members(self, guild_id, limit=1, after=0):
+    def list_guild_members(self, guild_id, limit=None, after=None):
         return self.make_request(Endpoints.LIST_GUILD_MEMBERS, dict(guild=guild_id), params=self._optional(
             limit=limit,
             after=after,
