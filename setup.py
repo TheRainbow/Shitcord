@@ -27,7 +27,7 @@ setup(
     packages=['shitcord'],
     include_package_data=True,
     install_requires=requirements,
-    extra_requires={},
+    extra_requires=extra_requires,
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
