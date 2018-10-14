@@ -9,7 +9,7 @@
     &nbsp;
     <a href="https://GitHub.com/itsVale/Shitcord/issues/"><img src="https://img.shields.io/github/issues/itsVale/Shitcord.svg" /></a>
     &nbsp;
-    <a href="https://GitHub.com/itsVale/Shitcord/pull/"><img src="https://img.shields.io/github/issues-pr/itsVale/Shitcord.svg" /></a>
+    <a href="https://GitHub.com/itsVale/Shitcord/pulls/"><img src="https://img.shields.io/github/issues-pr/itsVale/Shitcord.svg" /></a>
     &nbsp;
     <a href="http://perso.crans.org/besson/LICENSE.html"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" /></a>
     <hr>
