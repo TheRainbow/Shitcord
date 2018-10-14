@@ -503,8 +503,8 @@ class API:
     def get_user_dms(self):
         return self.make_request(Endpoints.GET_USER_DMS)
 
-    def create_dm(self, user):
-        return self.make_request(Endpoints.CREATE_DM, json={'recipient_id': user})
+    def create_dm(self, user_id):
+        return self.make_request(Endpoints.CREATE_DM, json={'recipient_id': user_id})
 
     def create_group_dm(self, access_tokens=None, nicks=None):
         return self.make_request(Endpoints.CREATE_GROUP_DM, json=self._optional(
