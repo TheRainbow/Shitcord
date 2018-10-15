@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from shitcord import __title__, __version__
+import shitcord
 from shitcord.http import rate_limit
 from shitcord.http.errors import ShitRequestFailedError
 import requests
@@ -119,5 +119,5 @@ class HTTP:
 
     @staticmethod
     def create_user_agent():
-        fmt = '{0} (https://github.com/itsVale/Shitcord, v{1}) / Python {2[0]}.{2[1]}.{2[2]} / requests {3}'
-        return fmt.format(__title__, __version__, sys.version_info, requests.__version__)
+        fmt = '{0.__title__} ({0.__url__}, v{0.__version__}) / Python {1[0]}.{1[1]}.{1[2]} / requests {2}'
+        return fmt.format(shitcord, sys.version_info, requests.__version__)
