@@ -32,7 +32,6 @@ _If applicable, add screenshots to help explain your problem._
 
   - Hardware: [e.g. MacBook Pro (13-inch, Mid 2012)] 
   - OS: [e.g. macOS 10.13.4]
-  - Browser: [e.g. Chrome, Safari, IE]
   - Version: [e.g. 61, 11.1, 9]
 
 ### Additional Context
