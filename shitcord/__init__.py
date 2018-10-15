@@ -29,7 +29,7 @@ version_info = Version(major=0, minor=0, micro=1, releaselevel='beta')
 fmt = '[%(levelname)s] %(asctime)s - %(name)s:%(lineno)d - %(message)s'
 logging.basicConfig(format=fmt, level=logging.INFO)
 
-# To support on Python versions under 3.6.1, we need to implement our own NullHandler
+# To support Python versions under 3.6.1, we need to implement our own NullHandler
 try:
     from logging import NullHandler
 except ImportError:
