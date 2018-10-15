@@ -16,6 +16,8 @@ __title__ = 'Shitcord'
 __author__ = 'Valentin B.'
 __version__ = '0.0.1b'
 __license__ = 'GNU GPLv3'
+__copyright__ = '(c) 2018 Valentin B.'
+__url__ = 'https://github.com/itsVale/Shitcord'
 
 from .http.api import API
 
