@@ -111,19 +111,19 @@ class Endpoints:
     LIST_VOICE_REGIONS                = (Methods.GET, VOICE)
 
     # Webhook
-    WEBHOOK                           = '/webhooks/{webhook}'
-    CREATE_WEBHOOK                    = (Methods.POST, CHANNEL + '/webhooks')
-    GET_CHANNEL_WEBHOOKS              = (Methods.GET, CHANNEL + '/webhooks')
-    GET_GUILD_WEBHOOKS                = (Methods.GET, GUILD + '/{guild}/webhooks')
-    GET_WEBHOOK                       = (Methods.GET, WEBHOOK)
-    GET_WEBHOOK_WITH_TOKEN            = (Methods.GET, WEBHOOK + '/{token}')
-    MODIFY_WEBHOOK                    = (Methods.PATCH, WEBHOOK)
-    MODIFY_WEBHOOK_WITH_TOKEN         = (Methods.PATCH, WEBHOOK + '/{token}')
-    DELETE_WEBHOOK                    = (Methods.DELETE, WEBHOOK)
-    DELETE_WEBHOOK_WITH_TOKEN         = (Methods.DELETE, WEBHOOK + '/{token}')
-    EXECUTE_WEBHOOK                   = (Methods.POST, WEBHOOK + '/{token}')
-    EXECUTE_SLACK_COMPATIBLE_WEBHOOK  = (Methods.POST, WEBHOOK + '/{token}/slack')
-    EXECUTE_GITHUB_COMPATIBLE_WEBHOOK = (Methods.POST, WEBHOOK + '/{token}/github')
+    WEBHOOK                           = '/webhooks'
+    CREATE_WEBHOOK                    = (Methods.POST, CHANNEL + WEBHOOK)
+    GET_CHANNEL_WEBHOOKS              = (Methods.GET, CHANNEL + WEBHOOK)
+    GET_GUILD_WEBHOOKS                = (Methods.GET, GUILD + '/{guild}' + WEBHOOK)
+    GET_WEBHOOK                       = (Methods.GET, WEBHOOK + '/{webhook}')
+    GET_WEBHOOK_WITH_TOKEN            = (Methods.GET, WEBHOOK + '/{webhook}/{token}')
+    MODIFY_WEBHOOK                    = (Methods.PATCH, WEBHOOK + '/{webhook}')
+    MODIFY_WEBHOOK_WITH_TOKEN         = (Methods.PATCH, WEBHOOK + '/{webhook}/{token}')
+    DELETE_WEBHOOK                    = (Methods.DELETE, WEBHOOK + '/{webhook}')
+    DELETE_WEBHOOK_WITH_TOKEN         = (Methods.DELETE, WEBHOOK + '/{webhook}/{token}')
+    EXECUTE_WEBHOOK                   = (Methods.POST, WEBHOOK + '/{webhook}/{token}')
+    EXECUTE_SLACK_COMPATIBLE_WEBHOOK  = (Methods.POST, WEBHOOK + '/{webhook}/{token}/slack')
+    EXECUTE_GITHUB_COMPATIBLE_WEBHOOK = (Methods.POST, WEBHOOK + '/{webhook}/{token}/github')
 
     # OAuth2
     OAUTH                             = '/oauth2/applications'
