@@ -15,4 +15,4 @@ class User(Model):
         self.email = data.get('email')
 
     def to_json(self):
-        raise NotImplemented("Ill do it later. 'later'")
+        raise NotImplementedError("Ill do it later. 'later'")
