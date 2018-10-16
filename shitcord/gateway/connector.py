@@ -1,92 +1,63 @@
-from ws4py.client.threadedclient import WebSocketClient
-import logging
-import requests
 import json
+import logging
+
 import gevent
-from shitcord.utils.gateway import JSON
-from shitcord.gateway.opcodes import Opcodes
+from ws4py.client.threadedclient import WebSocketClient
+from ws4py.messaging import TextMessage
+
+from .opcodes import Opcodes
+from .serialization import JSON
 
 log = logging.getLogger(__name__)
 url = 'https://discordapp.com/api/v6/gateway/bot'
 ws_url = 'wss://gateway.discord.gg/?v=6&encoding=json'
 
 
-class Start:
+class GatewayClient(WebSocketClient):
 
     def __init__(self, token):
+        super(GatewayClient, self).__init__(ws_url)
         self.token = token
-
-        log.debug('Requests: Connecting to {}'.format(url))
-        requests.get(url, params={"token": self.token})
-        log.debug('Requests: Successfully connected to {}'.format(url))
-        DummyClient().connect_ws()
-
-
-class DummyClient(WebSocketClient):
-
-    def __init__(self):
-        super().__init__(ws_url)
-        self.message = None
-        self.op = None
-        self.data = None
+        self.heart = None
         self.seq = None
-        self.heart = 41250
-        self.event = None
+        self.connect()
+        self.greenlet = gevent.spawn(self.alive_handler)
 
-    @staticmethod
-    def connect_ws():
-        global websocket_client
-        websocket_client = DummyClient()
-        websocket_client.connect()
-        websocket_client.run_forever()
+    def join(self):
+        self.greenlet.join()
 
     def opened(self):
         log.debug('WebSocket: Successfully connected!')
-        return
-
-    def received_message(self, message):
-        self.message = json.loads(str(message))
-        self.op = int(self.message.get('op'))
-        self.data = self.message.get('d')
-        self.seq = self.message.get('s')
-        log.info('Received Response:    Sequence number = {}  Opcode = {}'.format(self.seq, self.op))
-
-        if self.op != Opcodes.DISPATCH.value:
-
-            if self.op == Opcodes.RECONNECT.value:
-                log.info('Received reconnect opcode.')
-                return
-
-            if self.op == Opcodes.HEARTBEAT_ACK.value:
-                log.info('Received Heartbeat_ACK opcode.')
-                return
-
-            if self.op == Opcodes.HELLO.value:
-
-                try:
-                    heart = self.data.get('heartbeat_interval')
-                    if heart is not None:
-                        self.heart = heart
-                except AttributeError:
-                    pass
-
-                log.info('Heartbeat: Sending Heartbeat')
-                websocket_client.send(JSON.heartbeat())
-                log.info('Heartbeat: Successfully send')
-                websocket_client.send(JSON.identify())
-                gevent.spawn(self.alive_handler()) #It doesn't work
-            if self.op == Opcodes.HEARTBEAT:
-                websocket_client.send(JSON.heartbeat())
-                return
-
-        self.event = self.message.get('t')
-        log.info(self.event)
 
     def alive_handler(self):
         while True:
-            log.info('Alive Handler started!')
-            gevent.sleep(self.heart / 1000)
-            websocket_client.send(JSON.heartbeat(d=self.seq))
+            if self.seq and self.heart:
+                log.debug('Sending heartbeat.')
+                self.send(JSON.heartbeat(d=self.seq))
+                gevent.sleep(self.heart / 1000)
 
+    def received_message(self, message: TextMessage):
+        message = json.loads(message.data.decode(message.encoding))
+        op = Opcodes(message['op'])
+        data = message.get('d')
+        self.seq = self.seq or message['s']
 
-Start("TOKEN")
+        if op != Opcodes.DISPATCH:
+            log.info('Received Response: Sequence number = {}  Opcode = {}'.format(self.seq, op))
+            if op == Opcodes.RECONNECT:
+                log.info('Received reconnect opcode.')
+
+            if op == Opcodes.HEARTBEAT_ACK:
+                log.info('Received Heartbeat_ACK opcode.')
+
+            if op == Opcodes.HELLO:
+                self.heart = self.heart or data['heartbeat_interval']
+                self.send(JSON.identify(self.token))
+
+            if op == Opcodes.HEARTBEAT:
+                self.send(JSON.heartbeat())
+            return
+
+        event = message['t']
+
+        log.debug('Received Dispatch: event: {}'.format(event, data))
