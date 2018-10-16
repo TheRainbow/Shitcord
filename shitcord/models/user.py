@@ -5,6 +5,7 @@ class User(Model):
 
     def __init__(self, data):
         super().__init__(data)
+
         self.username = data['username']
         self.discriminator = data['discriminator']
         self.avatar_hash = data['avatar']

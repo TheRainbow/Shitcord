@@ -1,5 +1,5 @@
+from shitcord import Snowflake
 from abc import ABC, abstractmethod
-from datetime import datetime
 
 
 class Model(ABC):
@@ -14,8 +14,7 @@ class Model(ABC):
 
     @property
     def created_at(self):
-        when = (self.id >> 22) + 1420070400000
-        return datetime.fromtimestamp(when)
+        return Snowflake(self.id).timestamp
 
     @abstractmethod
     def to_json(self):
