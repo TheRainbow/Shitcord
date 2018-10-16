@@ -20,6 +20,7 @@ __copyright__ = '(c) 2018 Valentin B.'
 __url__ = 'https://github.com/itsVale/Shitcord'
 
 from .http.api import API
+from .utils.snowflake import *
 
 import logging
 import sys
