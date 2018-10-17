@@ -2,8 +2,8 @@
 
 import logging
 import shitcord
-from shitcord.http import rate_limit
-from shitcord.http.errors import ShitRequestFailedError
+from . import rate_limit
+from .errors import ShitRequestFailedError
 import requests
 import gevent
 import sys

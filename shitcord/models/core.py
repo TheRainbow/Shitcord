@@ -1,4 +1,4 @@
-from shitcord import Snowflake
+from ..utils import Snowflake
 from abc import ABC, abstractmethod
 
 
