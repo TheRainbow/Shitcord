@@ -18,6 +18,10 @@ class API:
         self.http = HTTP(token)
         self._cache = local()
 
+    @property
+    def token(self):
+        return self.http._token
+
     def make_request(self, route, fmt=None, **kwargs):
         """This will actually be used for HTTP requests to the Discord API."""
 
