@@ -33,6 +33,6 @@ class Client:
         """
 
         self.api = API(token)
-        self.gateway_client = GatewayClient(token)
+        self.gateway_client = GatewayClient(self, token)
 
         self.gateway_client.join()

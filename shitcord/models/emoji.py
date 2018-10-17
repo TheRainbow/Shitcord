@@ -1,5 +1,4 @@
 from shitcord.models.core import Model
-from shitcord.models.role import Role
 
 
 class Emoji(Model):
@@ -8,7 +7,7 @@ class Emoji(Model):
 
         self.managed = bool(data['managed'])
         self.name = data['name']
-        self.roles = [Role(role) for role in data['roles']]
+        self.roles = [int(role) for role in data['roles']]
         self.require_colons = bool(data['require_colons'])
         self.animated = bool(data['animated'])
         self.id = int(data['id'])

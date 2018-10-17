@@ -5,19 +5,22 @@ import gevent
 from ws4py.client.threadedclient import WebSocketClient
 from ws4py.messaging import TextMessage
 
+from shitcord.events import parser
 from .opcodes import Opcodes
 from .serialization import JSON
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 url = 'https://discordapp.com/api/v6/gateway/bot'
 ws_url = 'wss://gateway.discord.gg/?v=6&encoding=json'
 
 
 class GatewayClient(WebSocketClient):
 
-    def __init__(self, token):
+    def __init__(self, client, token):
         super(GatewayClient, self).__init__(ws_url)
         self.token = token
+        self.client = client
         self.heart = None
         self.seq = None
         self.connect()
@@ -61,3 +64,9 @@ class GatewayClient(WebSocketClient):
         event = message['t']
 
         log.debug('Received Dispatch: event: {}'.format(event, data))
+        self.fire_event(event.lower(), data)
+
+    def fire_event(self, name, data):
+        data = parser.parse_data(name, data)
+        for handler in self.client.events[name]:
+            handler(data)

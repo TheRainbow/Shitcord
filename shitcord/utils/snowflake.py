@@ -13,7 +13,8 @@ class Snowflake:
         self.process_id = (self.flake & 0x1F000) >> 12
         self.increment = self.flake & 0xFFF
 
-    def create_snowflake(self, date: datetime, high=False):
+    @classmethod
+    def create_snowflake(cls, date: datetime, high=False):
         """
         Returns a snowflake pretending to be created at the given time.
 
@@ -26,7 +27,7 @@ class Snowflake:
             A numeric snowflake. You already know.
         """
 
-        unix_seconds = self._to_unix_seconds(date)
+        unix_seconds = cls._to_unix_seconds(date)
         milliseconds = int(unix_seconds * 1000 - DISCORD_EPOCH)
 
         return (milliseconds << 22) + (2 ** 22 - 1 if high else 0)
