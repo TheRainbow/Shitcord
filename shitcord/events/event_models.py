@@ -29,3 +29,15 @@ class PresenceUpdate(Model):
 
     def to_json(self):
         pass
+
+
+class MessageDelete(Model):
+
+    def __init__(self, data):
+        super().__init__({'id': 0})
+        self.id = data['id']
+        self.channel = data.get['channel_id']
+        self.guild = data.get['guild_id']
+
+    def to_json(self):
+        pass
