@@ -1,4 +1,5 @@
 from shitcord.models.core import Model
+from shitcord.models.user import User
 
 
 class Message(Model):

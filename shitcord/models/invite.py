@@ -1,4 +1,6 @@
 from shitcord.models.core import Model
+from shitcord.models.guild import Guild
+from shitcord.models.channel import Channel
 
 
 class Invite(Model):

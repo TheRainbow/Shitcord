@@ -12,7 +12,8 @@ parsers = dict(
     message_create=NullParser(),
     message_delete=NullParser(),
     guild_member_update=NullParser(),
-    guild_update=NullParser()
+    guild_update=NullParser(),
+    message_update=NullParser()
 )
 
 

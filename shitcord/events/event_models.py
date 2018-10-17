@@ -13,3 +13,19 @@ class TypingStart(Model):
 
     def to_json(self):
         pass
+
+
+class PresenceUpdate(Model):
+
+    def __init__(self, data):
+        super().__init__({'id': 0})
+        self.activities = data['activities']
+        self.game = data['game']
+        self.guild = data.get('guild_id')
+        self.nick = data['nick']
+        self.roles = data.get('roles')
+        self.status = data['status']
+        self.user = data['user']
+
+    def to_json(self):
+        pass
