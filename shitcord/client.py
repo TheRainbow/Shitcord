@@ -5,6 +5,7 @@ from collections import defaultdict
 
 class Client:
     def __init__(self, **kwargs):
+        self.kwargs = kwargs
         self.api = None
         self.gateway_client = None
 
@@ -33,6 +34,6 @@ class Client:
         """
 
         self.api = API(token)
-        self.gateway_client = GatewayClient(self, token)
+        self.gateway_client = GatewayClient.from_client(self)
 
         self.gateway_client.join()

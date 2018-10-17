@@ -9,33 +9,40 @@ from shitcord.events import parser
 from .opcodes import Opcodes
 from .serialization import JSON
 
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-url = 'https://discordapp.com/api/v6/gateway/bot'
-ws_url = 'wss://gateway.discord.gg/?v=6&encoding=json'
+logger = logging.getLogger(__name__)
 
 
 class GatewayClient(WebSocketClient):
 
-    def __init__(self, client, token):
-        super(GatewayClient, self).__init__(ws_url)
-        self.token = token
+    def __init__(self, client, gateway, **kwargs):
+        self.url = gateway.pop('url')
+        self.shards = gateway.pop('shards')
+        self._session_start_limit = gateway.pop('session_start_limit')
+
+        super().__init__(self.url, **kwargs)
+
+        self.token = client.api.token
         self.client = client
         self.heart = None
         self.seq = None
         self.connect()
-        self.greenlet = gevent.spawn(self.alive_handler)
+        self.heartbeat_task = gevent.spawn(self.alive_handler)
+
+    @classmethod
+    def from_client(cls, client):
+        gateway_data = client.api.get_gateway_bot()
+        return cls(client, gateway_data, **client.kwargs)
 
     def join(self):
-        self.greenlet.join()
+        self.heartbeat_task.join()
 
     def opened(self):
-        log.debug('WebSocket: Successfully connected!')
+        logger.debug('WebSocket: Successfully connected!')
 
     def alive_handler(self):
         while True:
             if self.seq and self.heart:
-                log.debug('Sending heartbeat.')
+                logger.debug('Sending heartbeat.')
                 self.send(JSON.heartbeat(d=self.seq))
                 gevent.sleep(self.heart / 1000)
 
@@ -43,18 +50,19 @@ class GatewayClient(WebSocketClient):
         message = json.loads(message.data.decode(message.encoding))
         op = Opcodes(message['op'])
         data = message.get('d')
-        self.seq = self.seq or message['s']
+        self.seq = message.get('s')
 
         if op != Opcodes.DISPATCH:
-            log.info('Received Response: Sequence number = {}  Opcode = {}'.format(self.seq, op))
+            logger.debug('Received Response: Sequence number = {}  Opcode = {}'.format(self.seq, op))
+
             if op == Opcodes.RECONNECT:
-                log.info('Received reconnect opcode.')
+                logger.debug('Received reconnect opcode.')
 
             if op == Opcodes.HEARTBEAT_ACK:
-                log.info('Received Heartbeat_ACK opcode.')
+                logger.debug('Received Heartbeat_ACK opcode.')
 
             if op == Opcodes.HELLO:
-                self.heart = self.heart or data['heartbeat_interval']
+                self.heart = data.get('heartbeat_interval')
                 self.send(JSON.identify(self.token))
 
             if op == Opcodes.HEARTBEAT:
@@ -63,7 +71,7 @@ class GatewayClient(WebSocketClient):
 
         event = message['t']
 
-        log.debug('Received Dispatch: event: {}'.format(event, data))
+        logger.debug('Received Dispatch: event: {}'.format(event, data))
         self.fire_event(event.lower(), data)
 
     def fire_event(self, name, data):
