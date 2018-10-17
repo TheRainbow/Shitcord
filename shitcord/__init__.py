@@ -21,6 +21,7 @@ __url__ = 'https://github.com/itsVale/Shitcord'
 
 from .http.api import API
 from .utils.snowflake import *
+from .models import *
 
 import logging
 import sys
