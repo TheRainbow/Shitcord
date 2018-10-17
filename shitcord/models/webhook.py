@@ -1,4 +1,5 @@
 from shitcord.models.core import Model
+from shitcord.models import User
 
 
 class WebHook(Model):
