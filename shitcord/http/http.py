@@ -32,7 +32,7 @@ class HTTP:
         # Headers stuff
         self.headers = {
             'User-Agent': self.create_user_agent(),
-            'Authorization': kwargs.get('application_type', 'Bot ') + self._token,
+            'Authorization': kwargs.get('application_type', 'Bot') + ' ' + self._token,
         }
 
     @staticmethod
