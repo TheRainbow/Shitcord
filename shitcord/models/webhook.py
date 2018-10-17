@@ -3,7 +3,7 @@ from shitcord import *
 
 class WebHook(Model):
     def __init__(self, data):
-        super.__init__(data)
+        super().__init__(data)
 
         self.id = data['id']
         self.guild_id = data['guild_id']
