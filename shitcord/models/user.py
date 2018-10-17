@@ -1,4 +1,4 @@
-from .core import Model
+from shitcord.models.core import Model
 
 
 class User(Model):

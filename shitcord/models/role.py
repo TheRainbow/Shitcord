@@ -1,4 +1,4 @@
-from shitcord import *
+from shitcord.models.core import Model
 
 
 class Role(Model):
