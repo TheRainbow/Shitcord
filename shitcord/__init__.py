@@ -43,9 +43,6 @@ except ImportError:
         def emit(self, record):
             pass
 
-        def handle(self, record):
-            pass
-
 logging.getLogger(__name__).addHandler(NullHandler())
 
 if sys.version_info < (3, 4):
