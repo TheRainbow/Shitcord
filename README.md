@@ -30,18 +30,13 @@ and the Gateway, then there will be docs added.
 
 # Usage
 ```python
-import shitcord
-import logging
+from shitcord import *
+import logging #Only use if you want to see the log
 
-logger = logging.getLogger(__name__)
-api = shitcord.API("Token")
+logger = logging.getLogger('shitcord') #Only use if you want to see the log
+logger.level = logging.DEBUG #Only use if you want to see the log
 
-# Some variables we need for a request.
-channel_id = 12345678901234
-content = "I'm using Shitcord and I'm proud of this!"
-
-# Send a message to a given channel.
-api.create_message(channel_id, content)
+Client().start("TOKEN")
 ```
 
 # Support
