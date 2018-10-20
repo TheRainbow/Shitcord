@@ -26,7 +26,7 @@ class GatewayClient(WebSocketClient):
         self.heart = None
         self.seq = None
         self.connect()
-        self.heartbeat_task = gevent.spawn(self.alive_handler)
+        self.heartbeat_task = gevent.Greenlet.spawn(self.alive_handler)
 
     @classmethod
     def from_client(cls, client):
@@ -40,11 +40,14 @@ class GatewayClient(WebSocketClient):
         logger.debug('WebSocket: Successfully connected!')
 
     def alive_handler(self):
+        logging.debug('Activated Alive Handler!')
         while True:
             if self.seq and self.heart:
                 logger.debug('Sending heartbeat.')
                 self.send(JSON.heartbeat(d=self.seq))
                 gevent.sleep(self.heart / 1000)
+            else:
+                gevent.sleep(0)
 
     def received_message(self, message: TextMessage):
         message = json.loads(message.data.decode(message.encoding))

@@ -18,16 +18,17 @@ __version__ = '0.0.1b'
 __license__ = 'GNU GPLv3'
 __copyright__ = '(c) 2018 Valentin B.'
 __url__ = 'https://github.com/itsVale/Shitcord'
+from gevent import monkey
+monkey.patch_all()
+import logging
+import sys
+from collections import namedtuple
 
 from .http.api import API
 from .utils.snowflake import *
 from .models import *
 from .gateway import *
 from .client import Client
-
-import logging
-import sys
-from collections import namedtuple
 
 Version = namedtuple('VersionInfo', 'major minor micro releaselevel')
 version_info = Version(major=0, minor=0, micro=1, releaselevel='beta')
