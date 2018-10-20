@@ -26,7 +26,7 @@ class GatewayClient(WebSocketClient):
         self.heart = None
         self.seq = None
         self.connect()
-        self.heartbeat_task = gevent.Greenlet.spawn(self.alive_handler)
+        self.heartbeat_task = gevent.spawn(self.alive_handler)
 
     @classmethod
     def from_client(cls, client):
