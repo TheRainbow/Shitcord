@@ -2,7 +2,7 @@ import json
 import logging
 
 import gevent
-from ws4py.client.threadedclient import WebSocketClient
+from ws4py.client.geventclient import WebSocketClient
 from ws4py.messaging import TextMessage
 
 from shitcord.events import parser
