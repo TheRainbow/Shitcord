@@ -38,6 +38,6 @@ logger.level = logging.DEBUG #Only use if you want to see the log
 
 Client().start("TOKEN")
 ```
-
+There is no way to receive events.
 # Support
 Need help with something or just want to hang out with more or less cool guys? [Join our cool Discord server!](https://discord.gg/HbKGrVT)
