@@ -17,3 +17,7 @@ class User(Model):
 
     def to_json(self):
         raise NotImplementedError("Ill do it later. 'later'")
+
+    def __repr__(self):
+        return '<shitcord.User id=%d, bot=%r, name=%s, discriminator=%s>' % (
+        self.id, self.bot, self.name, self.discriminator)

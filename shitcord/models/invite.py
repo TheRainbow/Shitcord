@@ -1,6 +1,6 @@
+from shitcord.models.channel import Channel
 from shitcord.models.core import Model
 from shitcord.models.guild import Guild
-from shitcord.models.channel import Channel
 
 
 class Invite(Model):
@@ -15,3 +15,6 @@ class Invite(Model):
 
     def to_json(self):
         raise NotImplementedError("Ill do it later. 'later'")
+
+    def __repr__(self):
+        return '<shitcore.Invite id=%d, code=%s, channel=%r>' % (self.id, self.code, self.channel)

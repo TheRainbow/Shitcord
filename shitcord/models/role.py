@@ -16,3 +16,6 @@ class Role(Model):
 
     def to_json(self):
         raise NotImplementedError("Ill do it later. 'later'")
+
+    def __repr__(self):
+        return '<shitcore.Role id=%d, name=%s>' % (self.id, self.name)

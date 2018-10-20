@@ -14,3 +14,6 @@ class Emoji(Model):
 
     def to_json(self):
         raise NotImplementedError("Ill do it later. 'later'")
+
+    def __repr__(self):
+        return '<shitcord.Emoji id=%d, name=%r, animated=%r>' % (self.id, self.name, self.animated)

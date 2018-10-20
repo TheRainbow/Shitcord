@@ -5,7 +5,6 @@ class Channel(Model):
     def __init__(self, data):
         super().__init__(data)
 
-        self.id = int(data['id'])
         self.guild_id = data['guild_id']
         self.name = data['name']
         self.permissions_overwrites = data['permission_overwrites']
@@ -19,3 +18,6 @@ class Channel(Model):
 
     def to_json(self):
         raise NotImplementedError("Ill do it later. 'later'")
+
+    def __repr__(self):
+        return '<shitcore.Channel id=%d, name=%r, nsfw=%r, guild=%d>' % (self.id, self.name, self.nsfw, self.guild_id)

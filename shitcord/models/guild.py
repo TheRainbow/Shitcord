@@ -1,6 +1,5 @@
 from shitcord.models.core import Model
 from shitcord.models.emoji import Emoji
-from shitcord.models.role import Role
 
 
 class Guild(Model):
@@ -34,3 +33,6 @@ class Guild(Model):
 
     def to_json(self):
         raise NotImplementedError("Ill do it later. 'later'")
+
+    def __repr__(self):
+        return '<shitcore.Guild id=%d, name=%r>' % (self.id, self.name)

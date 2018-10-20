@@ -24,3 +24,7 @@ class Message(Model):
 
     def to_json(self):
         raise NotImplementedError("Ill do it later. 'later'")
+
+    def __repr__(self):
+        return '<shitcord.Message id=%d, author=%r, channel=%r, pinned=%r>' % (
+         self.id, self.author, self.channel_id, self.pinned)
