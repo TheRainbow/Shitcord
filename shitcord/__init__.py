@@ -42,5 +42,4 @@ except ImportError:
 logging.getLogger(__name__).addHandler(NullHandler())
 
 if sys.version_info < (3, 4):
-    logging.error('Upgrade your Python, you shitter.')
-    sys.exit(0)
+    raise RuntimeError('Upgrade your Python, you shitter.')
