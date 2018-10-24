@@ -10,6 +10,7 @@ from .opcodes import Opcodes
 from .serialization import JSON
 
 logger = logging.getLogger(__name__)
+none_function = lambda *args, **kwargas: None
 
 
 class GatewayClient(WebSocketClient):
@@ -81,3 +82,7 @@ class GatewayClient(WebSocketClient):
         data = parser.parse_data(name, data)
         for handler in self.client.events[name]:
             handler(data)
+
+        # noinspection PyProtectedMember
+        for alias in [key for key, value in self.client._aliases.items() if value == name] + [name]:
+            getattr(self.client, 'on_' + alias, none_function)(data)
