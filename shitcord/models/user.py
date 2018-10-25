@@ -20,4 +20,4 @@ class User(Model):
 
     def __repr__(self):
         return '<shitcord.User id=%d, bot=%r, name=%s, discriminator=%s>' % (
-        self.id, self.bot, self.name, self.discriminator)
+        self.id, self.bot, self.username, self.discriminator)
