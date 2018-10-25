@@ -32,6 +32,20 @@ class Snowflake:
 
         return (milliseconds << 22) + (2 ** 22 - 1 if high else 0)
 
+    def get_shard_id(self, shard_count):
+        """
+        Computes the shard ID from a given snowflake.
+        This ONLY works if the snowflake this class was initialized with is a valid guild id!
+
+        :param shard_count:
+            The amount of shards the bot is using.
+
+        :return:
+            The shard's id
+        """
+
+        return (self.flake >> 22) % shard_count
+
     @staticmethod
     def _to_unix_seconds(date):
         return (date - datetime(1970, 1, 1)).total_seconds()
