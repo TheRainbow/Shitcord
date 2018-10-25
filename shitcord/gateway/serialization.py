@@ -30,6 +30,11 @@ class JSON:
 
     @staticmethod
     @dump_result
+    def resume(token, sessid, seq):
+        return dict(token=token, session_id=sessid, seq=seq)
+
+    @staticmethod
+    @dump_result
     def identify(token, game=None):
         return dict(
             op=Opcodes.IDENTIFY,
