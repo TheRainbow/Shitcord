@@ -7,8 +7,9 @@ from ws4py.client.geventclient import WebSocketClient
 from ws4py.messaging import TextMessage
 
 from shitcord.events import parser
-from .opcodes import Opcodes
-from .serialization import JSON
+from shitcord.gateway.caching import store
+from shitcord.gateway.opcodes import Opcodes
+from shitcord.gateway.serialization import JSON
 
 logger = logging.getLogger(__name__)
 none_function = lambda *args, **kwargas: None
@@ -91,6 +92,9 @@ class GatewayClient(WebSocketClient):
             self.sessid = data['session_id']
 
         data = parser.parse_data(name, data)
+
+        store(self.client, data)
+
         for handler in self.client.events[name]:
             handler(data)
 
