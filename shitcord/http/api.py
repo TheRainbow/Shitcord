@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from shitcord.http.http import HTTP
-from shitcord.http.routes import Endpoints
+from .http import HTTP
+from .routes import Endpoints
 from gevent.local import local
 import json
 from contextlib import contextmanager
