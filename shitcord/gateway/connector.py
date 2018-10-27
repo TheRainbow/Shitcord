@@ -12,7 +12,7 @@ from shitcord.gateway.opcodes import Opcodes
 from shitcord.gateway.serialization import JSON
 
 logger = logging.getLogger(__name__)
-none_function = lambda *args, **kwargas: None
+none_function = lambda *args, **kwargs: None
 
 
 class GatewayClient(WebSocketClient):
@@ -27,7 +27,7 @@ class GatewayClient(WebSocketClient):
         self.token = client.api.token
         self.client = client
         self.heart = None
-        self.sessid = None
+        self.session_id = None
         self.seq = None
         self.latest_ack = None
         self.latest_heart = None
@@ -43,8 +43,8 @@ class GatewayClient(WebSocketClient):
         self.heartbeat_task.join()
 
     def opened(self):
-        if self.sessid:
-            self.send(JSON.resume(self.token, self.sessid, self.seq))
+        if self.session_id:
+            self.send(JSON.resume(self.token, self.session_id, self.seq))
             logger.debug('WebSocket: Successfully connected!')
 
     def alive_handler(self):
@@ -53,9 +53,11 @@ class GatewayClient(WebSocketClient):
             if self.seq and self.heart:
                 if self.latest_ack and self.latest_heart and self.latest_ack < self.latest_heart:
                     raise RuntimeError("TIMEOUT")
+
                 logger.debug('Sending heartbeat.')
                 self.latest_heart = datetime.now()
                 self.send(JSON.heartbeat(d=self.seq))
+
                 gevent.sleep(self.heart / 1000)
             else:
                 gevent.sleep(0)
@@ -89,7 +91,7 @@ class GatewayClient(WebSocketClient):
 
     def fire_event(self, name, data):
         if name == 'ready':
-            self.sessid = data['session_id']
+            self.session_id = data['session_id']
 
         data = parser.parse_data(name, data)
 

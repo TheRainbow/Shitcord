@@ -2,10 +2,13 @@ from datetime import datetime
 
 from shitcord.models.core import Model, Snowflake
 
+__all__ = ['TypingStart', 'PresenceUpdate', 'MessageDelete']
+
 
 class TypingStart(Model):
 
     def __init__(self, data):
+
         super().__init__({'id': Snowflake.create_snowflake(datetime.fromtimestamp(data['timestamp']))})
         self.channel = data['channel_id']
         self.guild = data['guild_id']
@@ -19,6 +22,7 @@ class PresenceUpdate(Model):
 
     def __init__(self, data):
         super().__init__({'id': 0})
+
         self.activities = data['activities']
         self.game = data['game']
         self.guild = data.get('guild_id')
@@ -35,6 +39,7 @@ class MessageDelete(Model):
 
     def __init__(self, data):
         super().__init__({'id': 0})
+
         self.id = data['id']
         self.channel = data['channel_id']
         self.guild = data['guild_id']

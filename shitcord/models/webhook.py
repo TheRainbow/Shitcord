@@ -2,7 +2,7 @@ from shitcord.models.core import Model
 from shitcord.models import User
 
 
-class WebHook(Model):
+class Webhook(Model):
     def __init__(self, data):
         super().__init__(data)
 
@@ -18,4 +18,7 @@ class WebHook(Model):
             self.user = None
 
     def to_json(self):
-        raise NotImplementedError("Ill do it later. 'later'")
+        raise NotImplementedError('Ill do it later. "later"')
+
+    def __repr__(self):
+        return '<shitcord.Webhook id=%d, channel=%r, name=%r>' % (self.id, self.channel_id, self.name)

@@ -32,7 +32,7 @@ class Guild(Model):
         self.region = data['region']
 
     def to_json(self):
-        raise NotImplementedError("Ill do it later. 'later'")
+        raise NotImplementedError('Ill do it later. "later"')
 
     def __repr__(self):
         return '<shitcore.Guild id=%d, name=%r>' % (self.id, self.name)

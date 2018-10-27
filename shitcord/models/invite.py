@@ -14,7 +14,7 @@ class Invite(Model):
         self.approximate_member_count = data['approximate_member_count']
 
     def to_json(self):
-        raise NotImplementedError("Ill do it later. 'later'")
+        raise NotImplementedError('Ill do it later. "later"')
 
     def __repr__(self):
         return '<shitcore.Invite id=%d, code=%s, channel=%r>' % (self.id, self.code, self.channel)

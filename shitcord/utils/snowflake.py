@@ -4,6 +4,8 @@ DISCORD_EPOCH = 1420070400000
 
 
 class Snowflake:
+    __slots__ = ('flake', 'binary', 'timestamp', 'worker_id', 'process_id', 'increment')
+
     def __init__(self, snowflake):
         self.flake = snowflake
 
@@ -32,6 +34,10 @@ class Snowflake:
 
         return (milliseconds << 22) + (2 ** 22 - 1 if high else 0)
 
+    @staticmethod
+    def _to_unix_seconds(date):
+        return (date - datetime(1970, 1, 1)).total_seconds()
+
     def get_shard_id(self, shard_count):
         """
         Computes the shard ID from a given snowflake.
@@ -45,7 +51,3 @@ class Snowflake:
         """
 
         return (self.flake >> 22) % shard_count
-
-    @staticmethod
-    def _to_unix_seconds(date):
-        return (date - datetime(1970, 1, 1)).total_seconds()

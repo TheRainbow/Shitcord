@@ -7,9 +7,10 @@ class Cache(object):
         self._cache = OrderedDict()
 
     def resolve(self, key: str, data=None):
-        if data is not None:
+        if data:
             self._cache[key] = data
             self.cleanse()
+
         self._cache.move_to_end(key)
         return self._cache.get(key)
 

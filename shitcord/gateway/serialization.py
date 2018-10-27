@@ -2,6 +2,7 @@ import functools
 import json
 import sys
 
+import shitcord
 from .opcodes import Opcodes
 from ..utils.jsonenum import EnumEncoder
 
@@ -42,8 +43,8 @@ class JSON:
                 token=token,
                 properties={
                     '$os': sys.platform,
-                    '$browser': "Shitcord",
-                    '$device': "Shitcord",
+                    '$browser': shitcord.__title__,
+                    '$device': shitcord.__title__,
                 }
             ),
             compress=False,

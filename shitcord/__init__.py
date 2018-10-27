@@ -12,14 +12,10 @@ Though I think this lib could actually be pretty cool...
 :license: GNU GPLv3, see LICENSE for more information
 """
 
-__title__ = 'Shitcord'
-__author__ = 'Valentin B.'
-__version__ = '0.0.1b'
-__license__ = 'GNU GPLv3'
-__copyright__ = '(c) 2018 Valentin B.'
-__url__ = 'https://github.com/itsVale/Shitcord'
+# This has to be here because otherwise it may cause issues
 from gevent import monkey
 monkey.patch_all()
+
 import logging
 import sys
 from collections import namedtuple
@@ -29,6 +25,13 @@ from .utils.snowflake import *
 from .models import *
 from .gateway import *
 from .client import Client
+
+__title__ = 'Shitcord'
+__author__ = 'Valentin B.'
+__version__ = '0.0.2b'
+__license__ = 'GNU GPLv3'
+__copyright__ = '(c) 2018 Valentin B.'
+__url__ = 'https://github.com/itsVale/Shitcord'
 
 Version = namedtuple('VersionInfo', 'major minor micro releaselevel')
 version_info = Version(major=0, minor=0, micro=1, releaselevel='beta')
