@@ -23,21 +23,27 @@ For now, you can only install the dev branch which is constantly updated.
 pip install -U https://github.com/itsVale/Shitcord/archive/dev.zip
 ```
 
-No documentation yet since the available code is not intended to be used by everyone.  
-It requires you to read the source code to understand how the library works. At the moment it's just
-a client to interact with the REST API. If there is an "official" client to interact with the REST API
-and the Gateway, then there will be docs added.
+Shitcord already features the REST API and also the Discord Gateway. Though the lib is very
+incomplete at this moment what you can see from the code below.
 
 # Usage
 ```python
-from shitcord import *
-import logging #Only use if you want to see the log
+import shitcord
 
-logger = logging.getLogger('shitcord') #Only use if you want to see the log
-logger.level = logging.DEBUG #Only use if you want to see the log
+client = shitcord.Client()
 
-Client().start("TOKEN")
+
+@client.on('message')
+def on_message(event):
+    content = event['content']
+    channel = event['channel_id']
+    
+    if content.startswith('!ping'):
+        client.api.create_message(channel, 'Pong!')
+        
+        
+client.start('Token')
 ```
-There is no way to receive events.
+
 # Support
 Need help with something or just want to hang out with more or less cool guys? [Join our cool Discord server!](https://discord.gg/HbKGrVT)

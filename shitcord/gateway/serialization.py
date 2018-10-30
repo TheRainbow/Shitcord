@@ -2,6 +2,7 @@ import functools
 import json
 import sys
 
+import shitcord
 from .opcodes import Opcodes
 from ..utils.jsonenum import EnumEncoder
 
@@ -30,6 +31,11 @@ class JSON:
 
     @staticmethod
     @dump_result
+    def resume(token, sessid, seq):
+        return dict(token=token, session_id=sessid, seq=seq)
+
+    @staticmethod
+    @dump_result
     def identify(token, game=None):
         return dict(
             op=Opcodes.IDENTIFY,
@@ -37,8 +43,8 @@ class JSON:
                 token=token,
                 properties={
                     '$os': sys.platform,
-                    '$browser': "Shitcord",
-                    '$device': "Shitcord",
+                    '$browser': shitcord.__title__,
+                    '$device': shitcord.__title__,
                 }
             ),
             compress=False,

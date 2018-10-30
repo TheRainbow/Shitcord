@@ -1,15 +1,18 @@
 import json
 import logging
+from datetime import datetime
 
 import gevent
 from ws4py.client.geventclient import WebSocketClient
 from ws4py.messaging import TextMessage
 
 from shitcord.events import parser
-from .opcodes import Opcodes
-from .serialization import JSON
+from shitcord.gateway.caching import store
+from shitcord.gateway.opcodes import Opcodes
+from shitcord.gateway.serialization import JSON
 
 logger = logging.getLogger(__name__)
+none_function = lambda *args, **kwargs: None
 
 
 class GatewayClient(WebSocketClient):
@@ -24,7 +27,10 @@ class GatewayClient(WebSocketClient):
         self.token = client.api.token
         self.client = client
         self.heart = None
+        self.session_id = None
         self.seq = None
+        self.latest_ack = None
+        self.latest_heart = None
         self.connect()
         self.heartbeat_task = gevent.spawn(self.alive_handler)
 
@@ -37,14 +43,21 @@ class GatewayClient(WebSocketClient):
         self.heartbeat_task.join()
 
     def opened(self):
-        logger.debug('WebSocket: Successfully connected!')
+        if self.session_id:
+            self.send(JSON.resume(self.token, self.session_id, self.seq))
+            logger.debug('WebSocket: Successfully connected!')
 
     def alive_handler(self):
         logging.debug('Activated Alive Handler!')
         while True:
             if self.seq and self.heart:
+                if self.latest_ack and self.latest_heart and self.latest_ack < self.latest_heart:
+                    raise RuntimeError("TIMEOUT")
+
                 logger.debug('Sending heartbeat.')
+                self.latest_heart = datetime.now()
                 self.send(JSON.heartbeat(d=self.seq))
+
                 gevent.sleep(self.heart / 1000)
             else:
                 gevent.sleep(0)
@@ -63,13 +76,12 @@ class GatewayClient(WebSocketClient):
 
             if op == Opcodes.HEARTBEAT_ACK:
                 logger.debug('Received Heartbeat_ACK opcode.')
+                self.latest_ack = datetime.now()
 
             if op == Opcodes.HELLO:
                 self.heart = data.get('heartbeat_interval')
                 self.send(JSON.identify(self.token))
 
-            if op == Opcodes.HEARTBEAT:
-                self.send(JSON.heartbeat())
             return
 
         event = message['t']
@@ -78,6 +90,16 @@ class GatewayClient(WebSocketClient):
         self.fire_event(event.lower(), data)
 
     def fire_event(self, name, data):
+        if name == 'ready':
+            self.session_id = data['session_id']
+
         data = parser.parse_data(name, data)
+
+        store(self.client, data)
+
         for handler in self.client.events[name]:
             handler(data)
+
+        # noinspection PyProtectedMember
+        for alias in [key for key, value in self.client._aliases.items() if value == name] + [name]:
+            getattr(self.client, 'on_' + alias, none_function)(data)

@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 
 class Model(ABC):
     def __init__(self, data):
-        self.id = int(data['id'])
+        self.id = data.pop('id')
 
     def __eq__(self, other):
         return type(self) == type(other) and self.id == other.id
 
     def __repr__(self):
-        return "<shitcord.Model id={.id}>".format(self)
+        return '<shitcord.Model id=%d>' % self.id
 
     @property
     def created_at(self):
