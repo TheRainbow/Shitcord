@@ -11,7 +11,10 @@ class TypingStart(Model):
 
         super().__init__({'id': Snowflake.create_snowflake(datetime.fromtimestamp(data['timestamp']))})
         self.channel = data['channel_id']
-        self.guild = data['guild_id']
+        try:
+            self.guild = data['guild_id']
+        except KeyError:
+            pass
         self.user_id = data['user_id']
 
     def to_json(self):
