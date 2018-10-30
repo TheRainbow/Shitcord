@@ -10,7 +10,10 @@ class Emoji(Model):
         self.roles = [int(role) for role in data['roles']]
         self.require_colons = bool(data['require_colons'])
         self.animated = bool(data['animated'])
-        self.id = int(data['id'])
+        try:
+            self.id = int(data['id'])
+        except KeyError:
+            pass
 
     def to_json(self):
         raise NotImplementedError('Ill do it later. "later"')

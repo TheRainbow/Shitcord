@@ -14,7 +14,10 @@ class Guild(Model):
         self.default_message_notifications = int(data['default_message_notifications'])
         self.afk_channel_id = data['afk_channel_id']
         self.explicit_content_filter = int(data['explicit_content_filter'])
-        self.id = int(data['id'])
+        try:
+            self.id = int(data['id'])
+        except KeyError:
+            pass
         self.verification_level = int(data['verification_level'])
         self.widget_channel_id = data.get('widget_channel_id')
         self.embed_channel_id = data.get('embed_channel_id')
