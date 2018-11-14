@@ -30,7 +30,8 @@ parsers = dict(
     guild_role_update=NullParser(),
     guild_role_delete=NullParser(),
     webhooks_update=NullParser(),
-    voice_state_update=NullParser()
+    voice_state_update=NullParser(),
+    presences_replace=NullParser()
 )
 
 
