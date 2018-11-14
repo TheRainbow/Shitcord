@@ -52,7 +52,10 @@ class GatewayClient(WebSocketClient):
         while True:
             if self.seq and self.heart:
                 if self.latest_ack and self.latest_heart and self.latest_ack < self.latest_heart:
-                    raise RuntimeError("TIMEOUT")
+                    try:
+                        self.send(JSON.resume(self.token, self.session_id, self.seq))
+                    except:
+                        raise RuntimeError("TIMEOUT")
 
                 logger.debug('Sending heartbeat.')
                 self.latest_heart = datetime.now()
@@ -81,6 +84,11 @@ class GatewayClient(WebSocketClient):
             if op == Opcodes.HELLO:
                 self.heart = data.get('heartbeat_interval')
                 self.send(JSON.identify(self.token))
+
+            if op == Opcodes.RESUME:
+                logger.debug('Resumed!')
+                self.heartbeat_task.kill()
+                self.join()
 
             return
 
