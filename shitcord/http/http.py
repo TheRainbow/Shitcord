@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import shitcord
-from . import rate_limit
-from .errors import ShitRequestFailedError
-import requests
-import gevent
+
+import logging
 import sys
 from random import randint
+
+import gevent
+import requests
+
+from . import rate_limit
+from .errors import ShitRequestFailedError
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +30,7 @@ class HTTP:
     def __init__(self, token, **kwargs):
         self._session = kwargs.get('session', requests.Session())
         self._token = token
+        self._lock = gevent.lock.RLock()
         self.limiter = rate_limit.Limiter()
 
         # Headers stuff
@@ -83,12 +87,13 @@ class HTTP:
 
         status = response.status_code
         if 200 <= status < 300:
-            # Request was successful
+            # Status codes 200, 201, 204 indicate successful requests. So just return the JSON response.
             logger.debug(self.LOG_SUCCESS.format(bucket=bucket, url=url, text=data))
             return data
 
         elif status != 429 and 400 <= status < 500:
-            # This should actually not happen.
+            # These status codes are only caused by the user and won't disappear with another request.
+            # It'd be just a waste of performance to attempt sending another request.
             raise ShitRequestFailedError(response, data, bucket)
 
         else:
@@ -102,6 +107,73 @@ class HTTP:
 
             gevent.sleep(backoff)
             return self.make_request(route, fmt, retries=retries, **kwargs)
+
+    def make_iter_request(self, route, fmt=None, **kwargs):
+        """
+        Makes a request to a given endpoint with a shit set of arguments.
+
+        The only difference to `make_request` is that this method will use
+        iteration for the retries instead of recursion.
+
+        Mainly for experimental purposes on performance.
+
+        :param route:
+            `shitcord.http.Routes` is what you need. To make sure your endpoint is valid.
+        :param fmt:
+            A dictionary containing all the necessary key-value-pairs to properly format the URL for the request.
+        :param kwargs:
+            Arguments that will be passed along to the requests library.
+
+        :return:
+            The API's response as a dictionary.
+        """
+
+        fmt = fmt or {}
+
+        # Prepare the headers
+        if 'headers' in kwargs:
+            kwargs['headers'].update(self.headers)
+        else:
+            kwargs['headers'] = self.headers
+
+        method = route[0].value
+        endpoint = route[1].format(**fmt)
+        bucket = (method, endpoint)
+        logger.debug('Bucket: {}, Kwargs: {}'.format(bucket, kwargs))
+
+        if not self.limiter.no_global_limit.is_set():
+            self.limiter.no_global_limit.wait()
+
+        url = (self.BASE_URL + endpoint)
+
+        with self._lock:
+            for retry in range(self.MAX_RETRIES):
+                response = self._session.request(method, url, **kwargs)
+
+                # Rate Limit stuff
+                self.limiter(bucket, response)
+
+                data = self._parse_response(response)
+                status = response.status_code
+
+                if 200 <= status < 300:
+                    # Status codes 200, 201, 204 indicate successful requests. So just return the JSON response.
+                    logger.debug(self.LOG_SUCCESS.format(bucket=bucket, url=url, text=data))
+                    return data
+
+                elif status != 429 and 400 <= status < 500:
+                    # These status codes are only caused by the user and won't disappear with another request.
+                    # It'd be just a waste of performance to attempt sending another request.
+                    raise ShitRequestFailedError(response, data, bucket)
+
+                else:
+                    # Some retarded shit happened here. Let's try that again.
+                    if retry > self.MAX_RETRIES:
+                        raise ShitRequestFailedError(response, data, bucket, retries=self.MAX_RETRIES)
+
+                    backoff = self.backoff()
+                    logger.debug(self.LOG_FAILED.format(bucket=bucket, url=url, code=status, error=response.content, seconds=backoff))
+                    gevent.sleep(backoff)
 
     def close(self):
         self._session.close()
