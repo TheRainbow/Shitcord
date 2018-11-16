@@ -151,7 +151,7 @@ class HTTP:
                 response = self._session.request(method, url, **kwargs)
 
                 # Rate Limit stuff
-                self.limiter(bucket, response)
+                self.limiter(response, bucket)
 
                 data = self._parse_response(response)
                 status = response.status_code
