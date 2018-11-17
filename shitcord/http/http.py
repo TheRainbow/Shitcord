@@ -15,6 +15,12 @@ from .errors import ShitRequestFailedError
 logger = logging.getLogger(__name__)
 
 
+def _parse_response(response):
+    if response.headers['Content-Type'] == 'application/json':
+        return response.json()
+    return response.text.encode('utf-8')
+
+
 class HTTP:
     """
     This represents a shitty HTTP client that wraps around the requests library and makes all the requests to the Discord API, handles rate limits
@@ -38,12 +44,6 @@ class HTTP:
             'User-Agent': self.create_user_agent(),
             'Authorization': kwargs.get('application_type', 'Bot') + ' ' + self._token,
         }
-
-    @staticmethod
-    def _parse_response(response):
-        if response.headers['Content-Type'] == 'application/json':
-            return response.json()
-        return response.text.encode('utf-8')
 
     def make_request(self, route, fmt=None, **kwargs):
         """
@@ -69,8 +69,8 @@ class HTTP:
         else:
             kwargs['headers'] = self.headers
 
-        endpoint = route[1].format(**fmt)
         method = route[0].value
+        endpoint = route[1].format(**fmt)
         bucket = (method, endpoint)
         logger.debug('Bucket: {}, Kwargs: {}'.format(bucket, kwargs))
 
@@ -79,13 +79,12 @@ class HTTP:
 
         url = (self.BASE_URL + endpoint)
         response = self._session.request(method, url, **kwargs)
-
-        # Do the rate limit stuff
-        self.limiter(response, bucket)
-
-        data = self._parse_response(response)
-
+        data = _parse_response(response)
         status = response.status_code
+
+        # Rate Limit stuff
+        self.limiter(bucket, response, data)
+
         if 200 <= status < 300:
             # Status codes 200, 201, 204 indicate successful requests. So just return the JSON response.
             logger.debug(self.LOG_SUCCESS.format(bucket=bucket, url=url, text=data))
@@ -149,12 +148,11 @@ class HTTP:
         with self._lock:
             for retry in range(self.MAX_RETRIES):
                 response = self._session.request(method, url, **kwargs)
+                data = _parse_response(response)
+                status = response.status_code
 
                 # Rate Limit stuff
-                self.limiter(response, bucket)
-
-                data = self._parse_response(response)
-                status = response.status_code
+                self.limiter(bucket, response, data)
 
                 if 200 <= status < 300:
                     # Status codes 200, 201, 204 indicate successful requests. So just return the JSON response.

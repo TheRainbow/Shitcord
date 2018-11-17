@@ -1,98 +1,94 @@
 # -*- coding: utf-8 -*-
 
-import logging
-import gevent
-from gevent.event import Event
-from email.utils import parsedate_to_datetime
 import datetime
+import logging
+from email.utils import parsedate_to_datetime
+
+import gevent
 
 logger = logging.getLogger(__name__)
 
 
 class APIResponse:
-    def __init__(self, response, bucket):
-        self.response = response
-        self.bucket = bucket
-        self.headers = response.headers
+    def __init__(self, bucket, response, parsed):
+        self._bucket = bucket
+        self._response = response
+        self._json = parsed
+        self._headers = self._response.headers
 
-        self.remaining = int(self.headers.get('X-RateLimit-Remaining', 0))
-        self.reset = int(self.headers.get('X-RateLimit-Reset', 0))
-
-        self.duration = 0.  # This is the actual rate limit duration
+        # Get all relevant headers for rate limit handling and immediately parse them into an useful format
+        self.date = self._headers['Date']
+        self.remaining = int(self._headers.get('X-RateLimit-Remaining'))
+        self.reset = self.__parse_header(int(self._headers.get('X-RateLimit-Reset')))
+        self.is_global = self._headers.get('X-RateLimit-Global', False)
 
     def __repr__(self):
-        return '<API Response for bucket {} with headers: {}>'.format(self.bucket, self.headers)
+        return '<API Response for bucket {} with headers {}>'.format(self._bucket, self._headers)
+
+    def update(self, headers):
+        self.date = headers.get('Date')
+        self.remaining = int(headers.get('X-RateLimit-Remaining'))
+        self.reset = self.__parse_header(int(headers.get('X-RateLimit-Reset')))
+        self.is_global = headers.get('X-RateLimit-Global', False)
 
     @property
     def is_rate_limited(self):
-        return self.remaining == 0
+        return self._response.status_code == 429
 
     @property
-    def rate_limit_duration(self):
-        return self.duration
+    def will_rate_limit(self):
+        return self._response.status_code != 429 and self.remaining == 0
 
     @property
-    def status_code(self):
-        return self.response.status_code
+    def global_limit(self):
+        return self.is_rate_limited and self.is_global
 
-    def get_rate_limit_seconds(self):
-        """Returns the total seconds of the rate limit duration."""
+    @property
+    def retry_after(self):
+        return self._json['retry_after'] / 1000.0
 
-        now = parsedate_to_datetime(self.headers['Date'])
-        reset = datetime.datetime.fromtimestamp(int(self.reset), datetime.timezone.utc)
+    def __parse_header(self, reset):
+        now = parsedate_to_datetime(self.date)
+        reset = datetime.datetime.fromtimestamp(reset, datetime.timezone.utc)
+        return (reset - now).total_seconds() + .2
 
-        return (reset - now).total_seconds() + .5
+    def cooldown(self, duration):
+        """This cools down a given route corresponding to a bucket."""
 
-    def sleep(self):
-        """Fuck those rate limits. Let's wait until they're gone."""
-
-        delay = self.rate_limit_duration
-        logger.debug('Sleeping for {} seconds due to a rate limit...'.format(delay))
-        return gevent.sleep(delay)
+        logger.debug('Sleeping for {} seconds due to an exhausted/incoming rate limit...'.format(duration))
+        return gevent.sleep(duration)
 
 
 class Limiter:
     def __init__(self):
-        self.is_global = False
-
-        self.no_global_limit = Event()
+        self.no_global_limit = gevent.event.Event()
         self.no_global_limit.set()
 
-    def __call__(self, response, bucket):
-        self.response = APIResponse(response, bucket)
+    def __call__(self, bucket, response, parsed):
+        response = APIResponse(bucket, response, parsed)
+        self._cooldown_task(response)
 
-        return self.cooldown()
+    def _cooldown_task(self, response):
+        duration, global_rate_limit = self.get_cooldown(response)
 
-    def cooldown(self):
-        """This actually cools down a route."""
+        gevent.spawn(response.cooldown, duration).get()
+        if global_rate_limit:
+            gevent.spawn_later(duration, self.no_global_limit.set())
 
-        self.check_rate_limit()
+    def get_cooldown(self, resp):
+        if resp.will_rate_limit:
+            duration = resp.reset
+            logger.debug('Next request is going to cause a rate limit. We wait for a Rate Limit Reset in {} seconds.'.format(duration))
 
-        if self.response.is_rate_limited and self.response.rate_limit_duration > 0:
-            gevent.spawn(self.response.sleep).get()
+        elif resp.is_rate_limited:
+            duration = resp.retry_after
+            logger.debug('You are being rate limited. We will retry it in {} seconds.'.format(duration))
 
-            if self.is_global:
-                self.is_global = False
-                self.no_global_limit.set()
-
-    def check_rate_limit(self):
-        """Checks the HTTP status code to indicate the current rate limit status."""
-
-        if self.response.is_rate_limited and self.response.status_code != 429:
-            duration = self.response.get_rate_limit_seconds()
-
-            logger.debug('Rate limit for {}, seconds: {}'.format(self.response, duration))
-            self.response.duration = duration
-
-        elif self.response.status_code == 429:
-            resp = self.response.response.json()
-
-            retry_after = resp['retry_after'] / 1000.0
-            logger.debug('You are being rate limited. We will retry it in {} seconds.'.format(retry_after))
-
-            self.is_global = resp.get('global', False)
-            if self.is_global:
+            if resp.global_limit:
+                # Global rate limit. Not good.
+                logger.debug('Global rate limit has been exhausted.')
                 self.no_global_limit.clear()
-                logger.debug('Dude, it\'s even a global rate limit! Let\'s sleep until that shit is done.')
+        else:
+            duration = 0
 
-            self.response.duration = retry_after
+        return duration, resp.global_limit

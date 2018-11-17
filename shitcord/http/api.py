@@ -25,7 +25,7 @@ class API:
     def make_request(self, route, fmt=None, **kwargs):
         """This will actually be used for HTTP requests to the Discord API."""
 
-        response = self.http.make_request(route, fmt, **kwargs)
+        response = self.http.make_iter_request(route, fmt, **kwargs)  # Due to better performance in general
         self._capture_response(response)
 
         return response
