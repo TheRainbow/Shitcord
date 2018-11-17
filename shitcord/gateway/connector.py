@@ -54,8 +54,8 @@ class GatewayClient(WebSocketClient):
                 if self.latest_ack and self.latest_heart and self.latest_ack < self.latest_heart:
                     try:
                         self.send(JSON.resume(self.token, self.session_id, self.seq))
-                    except:
-                        raise RuntimeError("TIMEOUT")
+                    except (AttributeError, ValueError):
+                        raise RuntimeError("Timeout.")
 
                 logger.debug('Sending heartbeat.')
                 self.latest_heart = datetime.now()
