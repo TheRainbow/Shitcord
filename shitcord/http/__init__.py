@@ -1,7 +1,7 @@
 from .api import API
 from .errors import ShitRequestFailedError
-from .http import HTTP
-from .rate_limit import Limiter
+from .http import parse_response, HTTP
+from .rate_limit import APIResponse, Limiter
 from .routes import Endpoints, Methods
 
-__all__ = ('Endpoints', 'Methods', 'Limiter', 'HTTP', 'ShitRequestFailedError', 'API')
+__all__ = ('API', 'APIResponse', 'Endpoints', 'HTTP', 'Limiter', 'Methods', 'parse_response', 'ShitRequestFailedError')

@@ -15,7 +15,7 @@ from .errors import ShitRequestFailedError
 logger = logging.getLogger(__name__)
 
 
-def _parse_response(response):
+def parse_response(response):
     if response.headers['Content-Type'] == 'application/json':
         return response.json()
     return response.text.encode('utf-8')
@@ -79,7 +79,7 @@ class HTTP:
 
         url = (self.BASE_URL + endpoint)
         response = self._session.request(method, url, **kwargs)
-        data = _parse_response(response)
+        data = parse_response(response)
         status = response.status_code
 
         # Rate Limit stuff
@@ -148,7 +148,7 @@ class HTTP:
         with self._lock:
             for retry in range(self.MAX_RETRIES):
                 response = self._session.request(method, url, **kwargs)
-                data = _parse_response(response)
+                data = parse_response(response)
                 status = response.status_code
 
                 # Rate Limit stuff
