@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import logging
-from .http import HTTP
-from .routes import Endpoints
-from gevent.local import local
 import json
+import logging
 from contextlib import contextmanager
 from urllib.parse import quote
+
+from gevent.local import local
+
+from .http import HTTP
+from .routes import Endpoints
 
 logger = logging.getLogger(__name__)
 
@@ -62,44 +64,24 @@ class API:
 
     # ----------------------------------- Guild ----------------------------------- #
 
-    def create_guild(self,
-                     name,
-                     region,
-                     icon=None,
-                     verification_level=0,
-                     default_message_notifications=0,
-                     explicit_content_filter=2,
-                     roles=None,
-                     channels=None):
+    def create_guild(self, name, region, icon=None, verification_level=0, default_message_notifications=0,
+                     explicit_content_filter=2, roles=None, channels=None):
         payload = {
             'name': name,
             'region': region,
             'verification_level': verification_level,
             'default_message_notifications': default_message_notifications,
             'explicit_content_filter': explicit_content_filter,
-        }
-
-        payload.update(self._optional(icon=icon, roles=roles, channels=channels))
+        }.update(self._optional(icon=icon, roles=roles, channels=channels))
 
         return self.make_request(Endpoints.CREATE_GUILD, json=payload)
 
     def get_guild(self, guild_id):
         return self.make_request(Endpoints.GET_GUILD, dict(guild=guild_id))
 
-    def modify_guild(self,
-                     guild_id,
-                     name=None,
-                     region=None,
-                     verification_level=None,
-                     default_message_notifications=None,
-                     explicit_content_filter=None,
-                     afk_channel_id=None,
-                     afk_timeout=None,
-                     icon=None,
-                     owner_id=None,
-                     splash=None,
-                     system_channel_id=None,
-                     reason=None):
+    def modify_guild(self, guild_id, name=None, region=None, verification_level=None, default_message_notifications=None,
+                     explicit_content_filter=None, afk_channel_id=None, afk_timeout=None, icon=None, owner_id=None,
+                     splash=None, system_channel_id=None, reason=None):
         return self.make_request(Endpoints.MODIFY_GUILD, dict(guild=guild_id), headers=self._reason_header(reason), json=self._optional(
             name=name,
             region=region,
@@ -120,17 +102,8 @@ class API:
     def get_guild_channels(self, guild_id):
         return self.make_request(Endpoints.GET_GUILD_CHANNELS, dict(guild=guild_id))
 
-    def create_guild_channel(self,
-                             guild_id,
-                             name,
-                             channel_type=None,
-                             topic=None,
-                             bitrate=None,
-                             user_limit=None,
-                             permission_overwrites=None,
-                             parent_id=None,
-                             nsfw=None,
-                             reason=None):
+    def create_guild_channel(self, guild_id, name, channel_type=None, topic=None, bitrate=None, user_limit=None,
+                             permission_overwrites=None, parent_id=None, nsfw=None, reason=None):
         payload = {
             'name': name
         }.update(self._optional(
@@ -175,25 +148,35 @@ class API:
         return self.make_request(Endpoints.ADD_GUILD_MEMBER, dict(guild=guild_id, user=user_id), json=payload)
 
     def modify_guild_member(self, guild_id, user_id, nick=None, roles=None, mute=None, deaf=None, channel_id=None, reason=None):
-        return self.make_request(Endpoints.MODIFY_GUILD_MEMBER, dict(guild=guild_id, user=user_id), headers=self._reason_header(reason),
-                                 json=self._optional(
-            nick=nick,
-            roles=roles,
-            mute=mute,
-            deaf=deaf,
-            channel_id=channel_id
-        ))
+        return self.make_request(
+            Endpoints.MODIFY_GUILD_MEMBER,
+            dict(guild=guild_id, user=user_id),
+            headers=self._reason_header(reason),
+            json=self._optional(
+                nick=nick,
+                roles=roles,
+                mute=mute,
+                deaf=deaf,
+                channel_id=channel_id
+            )
+        )
 
     def modify_current_user_nick(self, guild_id, nick):
         return self.make_request(Endpoints.MODIFY_CURRENT_USER_NICK, dict(guild=guild_id), json={'nick': nick})
 
     def add_guild_member_role(self, guild_id, user_id, role_id, reason=None):
-        return self.make_request(Endpoints.ADD_GUILD_MEMBER_ROLE, dict(guild=guild_id, user=user_id, role=role_id),
-                                 headers=self._reason_header(reason))
+        return self.make_request(
+            Endpoints.ADD_GUILD_MEMBER_ROLE,
+            dict(guild=guild_id, user=user_id, role=role_id),
+            headers=self._reason_header(reason)
+        )
 
     def remove_guild_member_role(self, guild_id, user_id, role_id, reason=None):
-        return self.make_request(Endpoints.REMOVE_GUILD_MEMBER_ROLE, dict(guild=guild_id, user=user_id, role=role_id),
-                                 headers=self._reason_header(reason))
+        return self.make_request(
+            Endpoints.REMOVE_GUILD_MEMBER_ROLE,
+            dict(guild=guild_id, user=user_id, role=role_id),
+            headers=self._reason_header(reason)
+        )
 
     def remove_guild_member(self, guild_id, user_id, reason=None):
         return self.make_request(Endpoints.REMOVE_GUILD_MEMBER, dict(guild=guild_id, user=user_id), headers=self._reason_header(reason))
@@ -210,7 +193,12 @@ class API:
             'reason': reason,
         }
 
-        return self.make_request(Endpoints.CREATE_GUILD_BAN, dict(guild=guild_id, user=user_id), headers=self._reason_header(reason), params=payload)
+        return self.make_request(
+            Endpoints.CREATE_GUILD_BAN,
+            dict(guild=guild_id, user=user_id),
+            headers=self._reason_header(reason),
+            params=payload
+        )
 
     def remove_guild_ban(self, guild_id, user_id, reason=None):
         return self.make_request(Endpoints.REMOVE_GUILD_BAN, dict(guild=guild_id, user=user_id), headers=self._reason_header(reason))
@@ -219,13 +207,18 @@ class API:
         return self.make_request(Endpoints.GET_GUILD_ROLES, dict(guild=guild_id))
 
     def create_guild_role(self, guild_id, name=None, permissions=None, color=None, hoist=None, mentionable=None, reason=None):
-        return self.make_request(Endpoints.CREATE_GUILD_ROLE, dict(guild=guild_id), headers=self._reason_header(reason), json=self._optional(
-            name=name,
-            permissions=permissions,
-            color=color,
-            hoist=hoist,
-            mentionable=mentionable
-        ))
+        return self.make_request(
+            Endpoints.CREATE_GUILD_ROLE,
+            dict(guild=guild_id),
+            headers=self._reason_header(reason),
+            json=self._optional(
+                name=name,
+                permissions=permissions,
+                color=color,
+                hoist=hoist,
+                mentionable=mentionable
+            )
+        )
 
     def modify_guild_role_positions(self, guild_id, role_id, position, reason=None):
         payload = {
@@ -273,11 +266,15 @@ class API:
         return self.make_request(Endpoints.CREATE_GUILD_INTEGRATION, dict(guild=guild_id), json=payload)
 
     def modify_guild_integration(self, guild_id, integration_id, expire_behavior=None, expire_grace_period=None, enable_emoticons=None):
-        return self.make_request(Endpoints.MODIFY_GUILD_INTEGRATION, dict(guild=guild_id, integration=integration_id), json=self._optional(
-            expire_behavior=expire_behavior,
-            expire_grace_period=expire_grace_period,
-            enable_emoticons=enable_emoticons,
-        ))
+        return self.make_request(
+            Endpoints.MODIFY_GUILD_INTEGRATION,
+            dict(guild=guild_id, integration=integration_id),
+            json=self._optional(
+                expire_behavior=expire_behavior,
+                expire_grace_period=expire_grace_period,
+                enable_emoticons=enable_emoticons,
+            )
+        )
 
     def delete_guild_integration(self, guild_id, integration_id):
         return self.make_request(Endpoints.DELETE_GUILD_INTEGRATION, dict(guild=guild_id, integration=integration_id))
@@ -289,10 +286,14 @@ class API:
         return self.make_request(Endpoints.GET_GUILD_EMBED, dict(guild=guild_id))
 
     def modify_guild_embed(self, guild_id, enabled=None, channel_id=None):
-        return self.make_request(Endpoints.MODIFY_GUILD_EMBED, dict(guild=guild_id), json=self._optional(
-            enabled=enabled,
-            channel_id=channel_id,
-        ))
+        return self.make_request(
+            Endpoints.MODIFY_GUILD_EMBED,
+            dict(guild=guild_id),
+            json=self._optional(
+                enabled=enabled,
+                channel_id=channel_id,
+            )
+        )
 
     def get_guild_vanity_url(self, guild_id):
         return self.make_request(Endpoints.GET_GUILD_VANITY_URL, dict(guild=guild_id))
@@ -302,40 +303,39 @@ class API:
     def get_channel(self, channel_id):
         return self.make_request(Endpoints.GET_CHANNEL, dict(channel=channel_id))
 
-    def modify_channel(self,
-                       channel_id,
-                       name=None,
-                       position=None,
-                       topic=None,
-                       nsfw=None,
-                       rate_limit_per_user=None,
-                       bitrate=None,
-                       user_limit=None,
-                       permission_overwrites=None,
-                       parent_id=None,
-                       reason=None):
-        return self.make_request(Endpoints.MODIFY_CHANNEL, dict(channel=channel_id), headers=self._reason_header(reason), json=self._optional(
-            name=name,
-            position=position,
-            topic=topic,
-            nsfw=nsfw,
-            rate_limit_per_user=rate_limit_per_user,
-            bitrate=bitrate,
-            user_limit=user_limit,
-            permission_overwrites=permission_overwrites,
-            parent_id=parent_id,
-        ))
+    def modify_channel(self, channel_id, name=None, position=None, topic=None, nsfw=None, rate_limit_per_user=None,
+                       bitrate=None, user_limit=None, permission_overwrites=None, parent_id=None, reason=None):
+        return self.make_request(
+            Endpoints.MODIFY_CHANNEL,
+            dict(channel=channel_id),
+            headers=self._reason_header(reason),
+            json=self._optional(
+                name=name,
+                position=position,
+                topic=topic,
+                nsfw=nsfw,
+                rate_limit_per_user=rate_limit_per_user,
+                bitrate=bitrate,
+                user_limit=user_limit,
+                permission_overwrites=permission_overwrites,
+                parent_id=parent_id,
+            )
+        )
 
     def delete_channel(self, channel_id, reason=None):
         return self.make_request(Endpoints.DELETE_CHANNEL, dict(channel=channel_id), headers=self._reason_header(reason))
 
     def get_channel_messages(self, channel_id, around=None, before=None, after=None, limit=None):
-        return self.make_request(Endpoints.GET_CHANNEL_MESSAGES, dict(channel=channel_id), params=self._optional(
-            around=around,
-            before=before,
-            after=after,
-            limit=limit,
-        ))
+        return self.make_request(
+            Endpoints.GET_CHANNEL_MESSAGES,
+            dict(channel=channel_id),
+            params=self._optional(
+                around=around,
+                before=before,
+                after=after,
+                limit=limit,
+            )
+        )
 
     def get_channel_message(self, channel_id, message_id):
         return self.make_request(Endpoints.GET_CHANNEL_MESSAGE, dict(channel=channel_id, message=message_id))
@@ -362,8 +362,12 @@ class API:
                     'file{}'.format(index): tuple(file) for index, file in enumerate(files)
                 }
 
-            return self.make_request(Endpoints.CREATE_MESSAGE, dict(channel=channel_id), files=attachments,
-                                     data={'payload_json': json.dumps(payload)})
+            return self.make_request(
+                Endpoints.CREATE_MESSAGE,
+                dict(channel=channel_id),
+                files=attachments,
+                data={'payload_json': json.dumps(payload)}
+            )
 
         return self.make_request(Endpoints.CREATE_MESSAGE, dict(channel=channel_id), json=payload)
 
@@ -383,10 +387,14 @@ class API:
         return self.make_request(Endpoints.DELETE_ALL_REACTIONS, dict(channel=channel_id, message=message_id))
 
     def edit_message(self, channel_id, message_id, content=None, embed=None):
-        return self.http.make_request(Endpoints.EDIT_MESSAGE, dict(channel=channel_id, message=message_id), json=self._optional(
-            content=content,
-            embed=embed
-        ))
+        return self.http.make_request(
+            Endpoints.EDIT_MESSAGE,
+            dict(channel=channel_id, message=message_id),
+            json=self._optional(
+                content=content,
+                embed=embed
+            )
+        )
 
     def delete_message(self, channel_id, message_id):
         return self.http.make_request(Endpoints.DELETE_MESSAGE, dict(channel=channel_id, message=message_id))
@@ -395,27 +403,38 @@ class API:
         return self.http.make_request(Endpoints.BULK_DELETE_MESSAGES, dict(channel=channel_id), json=self._optional(messages=messages))
 
     def edit_channel_permissions(self, channel_id, overwrite_id, allow=None, deny=None, permissions_type=None, reason=None):
-        return self.http.make_request(Endpoints.EDIT_CHANNEL_PERMISSIONS, dict(channel=channel_id, permissions=overwrite_id),
-                                      headers=self._reason_header(reason), json=self._optional(
-            allow=allow,
-            deny=deny,
-            type=permissions_type,
-        ))
+        return self.http.make_request(
+            Endpoints.EDIT_CHANNEL_PERMISSIONS,
+            dict(channel=channel_id, permissions=overwrite_id),
+            headers=self._reason_header(reason),
+            json=self._optional(
+                allow=allow,
+                deny=deny,
+                type=permissions_type,
+            )
+        )
 
     def get_channel_invites(self, channel_id):
         return self.make_request(Endpoints.GET_CHANNEL_INVITES, dict(channel=channel_id))
 
     def create_channel_invite(self, channel_id, max_age=None, max_uses=None, temporary=None, unique=None):
-        return self.make_request(Endpoints.CREATE_CHANNEL_INVITE, dict(channel=channel_id), json=self._optional(
-            max_age=max_age,
-            max_uses=max_uses,
-            temporary=temporary,
-            unique=unique,
-        ))
+        return self.make_request(
+            Endpoints.CREATE_CHANNEL_INVITE,
+            dict(channel=channel_id),
+            json=self._optional(
+                max_age=max_age,
+                max_uses=max_uses,
+                temporary=temporary,
+                unique=unique,
+            )
+        )
 
     def delete_channel_permission(self, channel_id, overwrite_id, reason=None):
-        return self.make_request(Endpoints.DELETE_CHANNEL_PERMISSION, dict(channel=channel_id, permission=overwrite_id),
-                                 headers=self._reason_header(reason))
+        return self.make_request(
+            Endpoints.DELETE_CHANNEL_PERMISSION,
+            dict(channel=channel_id, permission=overwrite_id),
+            headers=self._reason_header(reason)
+        )
 
     def trigger_typing_indicator(self, channel_id):
         return self.make_request(Endpoints.TRIGGER_TYPING_INDICATOR, dict(channel=channel_id))
@@ -440,12 +459,16 @@ class API:
     # ----------------------------------- Audit Log ----------------------------------- #
 
     def get_guild_audit_log(self, guild_id, user_id=None, action_type=None, before=None, limit=None):
-        return self.make_request(Endpoints.GET_GUILD_AUDIT_LOG, dict(guild=guild_id), params=self._optional(
-            user_id=user_id,
-            action_type=action_type,
-            before=before,
-            limit=limit,
-        ))
+        return self.make_request(
+            Endpoints.GET_GUILD_AUDIT_LOG,
+            dict(guild=guild_id),
+            params=self._optional(
+                user_id=user_id,
+                action_type=action_type,
+                before=before,
+                limit=limit,
+            )
+        )
 
     # ----------------------------------- Emoji ----------------------------------- #
 
@@ -470,8 +493,11 @@ class API:
             'roles': roles,
         }
 
-        return self.make_request(Endpoints.MODIFY_GUILD_EMOJI, dict(guild=guild_id, emoji=emoji_id),
-                                 headers=self._reason_header(reason), json=payload)
+        return self.make_request(
+            Endpoints.MODIFY_GUILD_EMOJI,
+            dict(guild=guild_id, emoji=emoji_id),
+            headers=self._reason_header(reason), json=payload
+        )
 
     def delete_guild_emoji(self, guild_id, emoji_id, reason=None):
         return self.make_request(Endpoints.DELETE_GUILD_EMOJI, dict(guild=guild_id, emoji=emoji_id), headers=self._reason_header(reason))
@@ -493,10 +519,13 @@ class API:
         return self.make_request(Endpoints.GET_USER, dict(user=user_id))
 
     def modify_current_user(self, username=None, avatar=None):
-        return self.make_request(Endpoints.MODIFY_CURRENT_USER, json=self._optional(
-            username=username,
-            avatar=avatar,
-        ))
+        return self.make_request(
+            Endpoints.MODIFY_CURRENT_USER,
+            json=self._optional(
+                username=username,
+                avatar=avatar,
+            )
+        )
 
     def get_current_user_guilds(self):
         return self.make_request(Endpoints.GET_CURRENT_USER_GUILDS)
@@ -511,10 +540,13 @@ class API:
         return self.make_request(Endpoints.CREATE_DM, json={'recipient_id': user_id})
 
     def create_group_dm(self, access_tokens=None, nicks=None):
-        return self.make_request(Endpoints.CREATE_GROUP_DM, json=self._optional(
-            access_tokens=access_tokens,
-            nicks=nicks,
-        ))
+        return self.make_request(
+            Endpoints.CREATE_GROUP_DM,
+            json=self._optional(
+                access_tokens=access_tokens,
+                nicks=nicks,
+            )
+        )
 
     def get_user_connections(self):
         return self.make_request(Endpoints.GET_USER_CONNECTIONS)
@@ -527,9 +559,6 @@ class API:
     # ----------------------------------- Webhook ----------------------------------- #
 
     def create_webhook(self, channel_id, name, avatar=None):
-        if not 1 < len(name) <= 32:
-            raise ValueError('Nigga, choose a fucking username between 2 and 32 characters and nothing else.')
-
         payload = {'name': name, }.update(self._optional(avatar=avatar))
 
         return self.make_request(Endpoints.CREATE_WEBHOOK, dict(channel=channel_id), json=payload)
@@ -547,17 +576,26 @@ class API:
         return self.make_request(Endpoints.GET_WEBHOOK_WITH_TOKEN, dict(webhook=webhook_id, token=webhook_token))
 
     def modify_webhook(self, webhook_id, name=None, avatar=None, channel_id=None, reason=None):
-        return self.make_request(Endpoints.MODIFY_WEBHOOK, dict(webhook=webhook_id), headers=self._reason_header(reason), json=self._optional(
-            name=name,
-            avatar=avatar,
-            channel_id=channel_id,
-        ))
+        return self.make_request(
+            Endpoints.MODIFY_WEBHOOK,
+            dict(webhook=webhook_id),
+            headers=self._reason_header(reason),
+            json=self._optional(
+                name=name,
+                avatar=avatar,
+                channel_id=channel_id,
+            )
+        )
 
     def modify_webhook_with_token(self, webhook_id, webhook_token, name=None, avatar=None):
-        return self.make_request(Endpoints.MODIFY_WEBHOOK_WITH_TOKEN, dict(webhook=webhook_id, token=webhook_token), json=self._optional(
-            name=name,
-            avatar=avatar,
-        ))
+        return self.make_request(
+            Endpoints.MODIFY_WEBHOOK_WITH_TOKEN,
+            dict(webhook=webhook_id, token=webhook_token),
+            json=self._optional(
+                name=name,
+                avatar=avatar,
+            )
+        )
 
     def delete_webhook(self, webhook_id, reason=None):
         return self.make_request(Endpoints.DELETE_WEBHOOK, dict(webhook=webhook_id), headers=self._reason_header(reason))
@@ -568,14 +606,19 @@ class API:
     def execute_webhook(self, webhook_id, webhook_token, content=None, username=None, avatar_url=None, tts=None, file=None, embeds=None, wait=False):
         params = {'wait': int(wait)}
 
-        return self.make_request(Endpoints.EXECUTE_WEBHOOK, dict(webhook=webhook_id, token=webhook_token), params=params, json=self._optional(
-            content=content,
-            username=username,
-            avatar_url=avatar_url,
-            tts=tts,
-            file=file,
-            embeds=embeds,
-        ))
+        return self.make_request(
+            Endpoints.EXECUTE_WEBHOOK,
+            dict(webhook=webhook_id, token=webhook_token),
+            params=params,
+            json=self._optional(
+                content=content,
+                username=username,
+                avatar_url=avatar_url,
+                tts=tts,
+                file=file,
+                embeds=embeds,
+            )
+        )
 
     def execute_slack_compatible_webhook(self, webhook_id, webhook_token):
         return self.make_request(Endpoints.EXECUTE_SLACK_COMPATIBLE_WEBHOOK, dict(webhook=webhook_id, token=webhook_token))
