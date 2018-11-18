@@ -189,5 +189,5 @@ class HTTP:
 
     @staticmethod
     def create_user_agent():
-        fmt = '{0.__title__} ({0.__url__}, v{0.__version__}) / Python {1[0]}.{1[1]}.{1[2]} / requests {2}'
+        fmt = 'DiscordBot ({0.__url__}, v{0.__version__}) / Python {1[0]}.{1[1]}.{1[2]} / requests {2}'
         return fmt.format(shitcord, sys.version_info, requests.__version__)
