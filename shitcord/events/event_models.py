@@ -29,7 +29,7 @@ class PresenceUpdate(Model):
         self.activities = data['activities']
         self.game = data['game']
         self.guild = data.get('guild_id')
-        self.nick = data['nick']
+        self.nick = data.get('nick', None)
         self.roles = data.get('roles')
         self.status = data['status']
         self.user = data['user']
