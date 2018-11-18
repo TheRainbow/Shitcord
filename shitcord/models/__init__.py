@@ -1,11 +1,9 @@
 from .core import Model
 from .user import User
-from .channel import Channel
+from .channel import *
 from .role import Role
 from .emoji import Emoji
 from .guild import Guild
 from .message import Message
 from .webhook import Webhook
 from .invite import Invite
-
-__all__ = ('Model', 'User', 'Channel', 'Role', 'Emoji', 'Guild', 'Message', 'Webhook', 'Invite')
