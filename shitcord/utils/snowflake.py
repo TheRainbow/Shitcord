@@ -9,7 +9,7 @@ class Snowflake:
     def __init__(self, snowflake):
         self.flake = snowflake
 
-        self.binary = '{0:08b}'.format(self.flake)
+        self.binary = bin(self.flake)[2:].zfill(8)
         self.timestamp = datetime.utcfromtimestamp(((self.flake >> 22) + DISCORD_EPOCH) / 1000)
         self.worker_id = (self.flake & 0x3E0000) >> 17
         self.process_id = (self.flake & 0x1F000) >> 12
