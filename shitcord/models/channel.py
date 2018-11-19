@@ -39,6 +39,16 @@ class BaseChannel(Model):
         return json
 
 
+class PartialChannel(BaseChannel):
+    def __init__(self, data, http):
+        super().__init__(data, http)
+
+        self.name = data['name']
+
+    def __repr__(self):
+        return '<shitcord.PartialChannel id={} name={}>'.format(self.id, self.name)
+
+
 class TextChannel(BaseChannel):
     def __init__(self, data, http):
         super().__init__(data, http)
