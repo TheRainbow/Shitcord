@@ -1,22 +1,43 @@
-from shitcord.models.core import Model
+from .core import Model
 
 
-class User(Model):
+class _Connection:
+    def __init__(self, payload):
+        self.id = payload['id']
+        self.name = payload['name']
+        self.type = payload['type']
+        self.revoked = payload['revoked']
+        self.integrations = payload['integrations']
 
-    def __init__(self, data):
-        super().__init__(data)
 
-        self.username = data['username']
-        self.discriminator = data['discriminator']
-        self.avatar_hash = data['avatar']
-        self.bot = bool(data.get('bot', False))
-        self.mfa_enabled = data.get('mfa_enabled')
+class BaseUser(Model):
+    def __init__(self, data, http):
+        self._json = data
+        super().__init__(data.get('id'), http)
+
+        self.name = data.get('id')
+        self.discriminator = data.get('discriminator')
+        self.avatar = data.get('avatar')
+        self.bot = data.get('bot')
+        self.mfa = data.get('mfa_enabled')
         self.locale = data.get('locale')
-        self.verified = data.get('locale', True)
+        self.verified = data.get('verified')
         self.email = data.get('email')
 
-    def to_json(self):
-        raise NotImplementedError('Ill do it later. "later"')
+    def __repr__(self):
+        raise NotImplementedError
+
+    def to_json(self, **kwargs):
+        json = self._json
+        if kwargs:
+            json.update(kwargs)
+
+        return json
+
+
+class User(BaseUser):
+    def __init__(self, data, http):
+        super().__init__(data, http)
 
     def __repr__(self):
-        return '<shitcord.User id=%d, bot=%r, name=%s, discriminator=%s>' % (self.id, self.bot, self.username, self.discriminator)
+        return '<shitcord.User id={} name={} discriminator={} bot={}>'.format(self.id, self.name, self.discriminator, self.bot)

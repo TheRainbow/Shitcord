@@ -4,7 +4,7 @@ from .core import Model
 class BaseEmoji(Model):
     def __init__(self, data, http):
         self._json = data
-        super().__init__(data['http'], http)
+        super().__init__(data['id'], http)
 
         self.name = data['name']
 
