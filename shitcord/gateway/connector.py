@@ -101,7 +101,7 @@ class GatewayClient(WebSocketClient):
         if name == 'ready':
             self.session_id = data['session_id']
 
-        data = parser.parse_data(name, data)
+        data = parser.parse_data(name, data, self.client.api)
 
         store(self.client, data)
 

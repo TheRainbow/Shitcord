@@ -3,8 +3,8 @@ from shitcord.models.user import User
 
 
 class Message(Model):
-    def __init__(self, data):
-        super().__init__(data)
+    def __init__(self, data, http):
+        super().__init__(data, http)
 
         self.response = data
         self.attachments = data['attachments']
@@ -15,7 +15,7 @@ class Message(Model):
         self.id = int(data['id'])
         self.pinned = bool(data['pinned'])
         self.edited_timestamp = data['edited_timestamp']
-        self.author = User(data['author'])
+        self.author = User(data['author'], http)
         self.mention_roles = data['mention_roles']
         self.content = data['content']
         self.channel_id = data['channel_id']

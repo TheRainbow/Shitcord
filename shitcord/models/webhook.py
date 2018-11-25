@@ -3,8 +3,8 @@ from shitcord.models import User
 
 
 class Webhook(Model):
-    def __init__(self, data):
-        super().__init__(data)
+    def __init__(self, data, http):
+        super().__init__(data, http)
 
         self.id = data['id']
         self.guild_id = data['guild_id']
@@ -13,7 +13,7 @@ class Webhook(Model):
         self.avatar = data['avatar']
         self.token = data['token']
         try:
-            self.user = User(data['user'])
+            self.user = User(data['user'], http)
         except KeyError:
             self.user = None
 

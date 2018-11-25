@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Parser(ABC):
     @abstractmethod
-    def parse(self, data):
+    def parse(self, data, http):
         pass
 
 
@@ -11,10 +11,10 @@ class ModelParser(Parser):
     def __init__(self, model):
         self.model = model
 
-    def parse(self, data):
-        return self.model(data)
+    def parse(self, data, http):
+        return self.model(data, http)
 
 
 class NullParser(Parser):
-    def parse(self, data):
+    def parse(self, data, http):
         return data

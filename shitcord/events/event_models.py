@@ -7,9 +7,9 @@ __all__ = ['TypingStart', 'PresenceUpdate', 'MessageDelete']
 
 class TypingStart(Model):
 
-    def __init__(self, data):
+    def __init__(self, data, http):
 
-        super().__init__({'id': Snowflake.create_snowflake(datetime.fromtimestamp(data['timestamp']))})
+        super().__init__(Snowflake.create_snowflake(datetime.fromtimestamp(data['timestamp'])), http)
         self.channel = data['channel_id']
         try:
             self.guild = data['guild_id']
@@ -23,8 +23,8 @@ class TypingStart(Model):
 
 class PresenceUpdate(Model):
 
-    def __init__(self, data):
-        super().__init__({'id': 0})
+    def __init__(self, data, http):
+        super().__init__(0, http)
 
         self.activities = data['activities']
         self.game = data['game']
@@ -40,8 +40,8 @@ class PresenceUpdate(Model):
 
 class MessageDelete(Model):
 
-    def __init__(self, data):
-        super().__init__({'id': 0})
+    def __init__(self, data, http):
+        super().__init__(0, http)
 
         self.id = data['id']
         self.channel = data['channel_id']

@@ -2,8 +2,8 @@ from shitcord.models.core import Model
 
 
 class Role(Model):
-    def __init__(self, data):
-        super().__init__(data)
+    def __init__(self, data, http):
+        super().__init__(data, http)
 
         self.hoist = data['hoist']
         self.name = data['name']

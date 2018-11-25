@@ -35,8 +35,8 @@ parsers = dict(
 )
 
 
-def parse_data(event, data):
+def parse_data(event, data, http):
     if event not in parsers:
         raise InvalidEventException(event)
 
-    return parsers[event].parse(data)
+    return parsers[event].parse(data, http)

@@ -52,3 +52,5 @@ class JSON:
             shard=[0, 1],
             presence=game or {"status": "online", "since": 91879201, "afk": False}
         )
+
+
