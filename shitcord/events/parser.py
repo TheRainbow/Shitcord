@@ -1,15 +1,15 @@
-from shitcord.events.error import InvalidEventException
-from shitcord.events import event_models
-from shitcord.events.parsers import ModelParser, NullParser
-from shitcord.events.ready import Ready
-from shitcord.models import Guild
+from ..events.error import InvalidEventException
+from ..events import event_models
+from ..events.parsers import ModelParser, NullParser
+from ..events.ready import Ready
+from ..models import Guild, Message
 
 parsers = dict(
     guild_create=ModelParser(Guild),
     ready=ModelParser(Ready),
     presence_update=ModelParser(event_models.PresenceUpdate),
     typing_start=ModelParser(event_models.TypingStart),
-    message_create=NullParser(),
+    message_create=ModelParser(Message),
     message_delete=ModelParser(event_models.MessageDelete),
     guild_member_update=NullParser(),
     guild_update=NullParser(),

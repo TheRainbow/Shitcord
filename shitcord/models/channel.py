@@ -8,14 +8,14 @@ __all__ = ['TextChannel', 'DMChannel', 'VoiceChannel', 'GroupDMChannel', 'Catego
 
 def _channel_from_payload(data, http):
     channel_type = IntChannelTypes(data['type']).name
-    channel_cls = ChannelTypes[channel_type]
+    channel_cls = ChannelTypes[channel_type].value
 
     return channel_cls(data, http)
 
 
 def _get_as_datetime(data, key):
     item = data.get(key)
-    if not item:
+    if not type(item) == str:
         return None
 
     return datetime.utcfromtimestamp(item)
