@@ -18,8 +18,8 @@ class APIResponse:
 
         # Get all relevant headers for rate limit handling and immediately parse them into an useful format
         self.date = self._headers['Date']
-        self.remaining = int(self._headers.get('X-RateLimit-Remaining', 1))
-        self.reset = self.__parse_header(int(self._headers.get('X-RateLimit-Reset', 1)))
+        self.remaining = int(self._headers.get('X-RateLimit-Remaining', 0))
+        self.reset = self.__parse_header(int(self._headers.get('X-RateLimit-Reset', 0)))
         self.is_global = self._headers.get('X-RateLimit-Global', False)
 
     def __repr__(self):
