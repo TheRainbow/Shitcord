@@ -15,8 +15,10 @@ def _channel_from_payload(data, http):
 
 def _get_as_datetime(data, key):
     item = data.get(key)
-    if not type(item) == str:
+    if not item:
         return None
+    if type(item) == str:
+        return item
 
     return datetime.utcfromtimestamp(item)
 

@@ -3,6 +3,7 @@ from ..events.event_models import *
 from ..events.parsers import ModelParser, NullParser
 from ..events.ready import Ready
 from ..models import *
+from ..models.channel import _channel_from_payload
 
 parsers = dict(
     guild_create=ModelParser(Guild),
@@ -11,25 +12,25 @@ parsers = dict(
     typing_start=ModelParser(TypingStart),
     message_create=ModelParser(Message),
     message_delete=ModelParser(MessageDelete),
-    guild_member_update=NullParser(),
-    guild_update=NullParser(),
+    guild_member_update=ModelParser(GuildMemberUpdate),
+    guild_update=ModelParser(Guild),
     message_update=ModelParser(Message),
-    message_reaction_add=NullParser(),
-    message_reaction_remove=NullParser(),
-    message_reaction_remove_all=NullParser(),
+    message_reaction_add=ModelParser(MessageReaction),
+    message_reaction_remove=ModelParser(MessageReaction),
+    message_reaction_remove_all=ModelParser(MessageReactionRemoveAll),
     channel_pins_update=ModelParser(ChannelPinsUpdate),
-    channel_create=ModelParser(TextChannel),
-    channel_update=ModelParser(TextChannel),
-    channel_delete=ModelParser(TextChannel),
-    guild_ban_add=NullParser(),
-    guild_ban_remove=NullParser(),
-    guild_member_remove=NullParser(),
-    guild_member_add=NullParser(),
-    guild_member_chunk=NullParser(),
-    guild_role_create=NullParser(),
-    guild_role_update=NullParser(),
-    guild_role_delete=NullParser(),
-    webhooks_update=NullParser(),
+    channel_create=ModelParser(_channel_from_payload),
+    channel_update=ModelParser(_channel_from_payload),
+    channel_delete=ModelParser(_channel_from_payload),
+    guild_ban_add=ModelParser(GuildBan),
+    guild_ban_remove=ModelParser(GuildBan),
+    guild_member_remove=ModelParser(GuildMemberRemove),
+    guild_member_add=ModelParser(GuildMemberAdd),
+    guild_member_chunk=ModelParser(GuildMemberChunk),
+    guild_role_create=ModelParser(GuildRole),
+    guild_role_update=ModelParser(GuildRole),
+    guild_role_delete=ModelParser(GuildRoleDelete),
+    webhooks_update=ModelParser(WebhooksUpdate),
     voice_state_update=NullParser(),
     presences_replace=NullParser()
 )
