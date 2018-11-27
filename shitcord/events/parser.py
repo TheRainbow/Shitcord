@@ -2,7 +2,7 @@ from ..events.error import InvalidEventException
 from ..events.event_models import *
 from ..events.parsers import ModelParser, NullParser
 from ..events.ready import Ready
-from ..models import Guild, Message
+from ..models import *
 
 parsers = dict(
     guild_create=ModelParser(Guild),
@@ -13,14 +13,14 @@ parsers = dict(
     message_delete=ModelParser(MessageDelete),
     guild_member_update=NullParser(),
     guild_update=NullParser(),
-    message_update=NullParser(),
+    message_update=ModelParser(Message),
     message_reaction_add=NullParser(),
     message_reaction_remove=NullParser(),
     message_reaction_remove_all=NullParser(),
-    channel_pins_update=NullParser(),
-    channel_create=NullParser(),
-    channel_update=NullParser(),
-    channel_delete=NullParser(),
+    channel_pins_update=ModelParser(ChannelPinsUpdate),
+    channel_create=ModelParser(TextChannel),
+    channel_update=ModelParser(TextChannel),
+    channel_delete=ModelParser(TextChannel),
     guild_ban_add=NullParser(),
     guild_ban_remove=NullParser(),
     guild_member_remove=NullParser(),

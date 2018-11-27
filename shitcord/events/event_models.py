@@ -1,8 +1,10 @@
 from datetime import datetime
 
 from shitcord.models.core import Model, Snowflake
+from ..models.channel import _channel_from_payload
 
-__all__ = ['TypingStart', 'PresenceUpdate', 'MessageDelete']
+
+__all__ = ['TypingStart', 'PresenceUpdate', 'MessageDelete', 'ChannelPinsUpdate']
 
 
 class TypingStart(Model):
@@ -46,6 +48,18 @@ class MessageDelete(Model):
         self.id = data['id']
         self.channel = data['channel_id']
         self.guild = data['guild_id']
+
+    def to_json(self):
+        pass
+
+
+class ChannelPinsUpdate(Model):
+
+    def __init__(self, data, http):
+        super().__init__(0, http)
+
+        self.channel = _channel_from_payload(self._http.get_channel(data['channel_id']), self._http)
+        self.last_pin_timestamp = data.get('last_pin_timestamp')
 
     def to_json(self):
         pass
