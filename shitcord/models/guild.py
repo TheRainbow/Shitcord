@@ -25,7 +25,6 @@ class Guild(Model):
         self.owner_id = data['owner_id']
         self.owner = User(self._http.get_user(self.owner_id), http)
         self.mfa_level = data['mfa_level']
-        self.embed_enabled = data.get('embed_enabled')
         self.system_channel_id = data['system_channel_id']
         self.widget_enabled = data.get('widget_enabled')
         self.icon = data['icon']
