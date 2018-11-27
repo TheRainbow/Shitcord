@@ -1,5 +1,5 @@
 from ..events.error import InvalidEventException
-from ..events import event_models
+from ..events.event_models import *
 from ..events.parsers import ModelParser, NullParser
 from ..events.ready import Ready
 from ..models import Guild, Message
@@ -7,10 +7,10 @@ from ..models import Guild, Message
 parsers = dict(
     guild_create=ModelParser(Guild),
     ready=ModelParser(Ready),
-    presence_update=ModelParser(event_models.PresenceUpdate),
-    typing_start=ModelParser(event_models.TypingStart),
+    presence_update=ModelParser(PresenceUpdate),
+    typing_start=ModelParser(TypingStart),
     message_create=ModelParser(Message),
-    message_delete=ModelParser(event_models.MessageDelete),
+    message_delete=ModelParser(MessageDelete),
     guild_member_update=NullParser(),
     guild_update=NullParser(),
     message_update=NullParser(),

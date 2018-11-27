@@ -1,21 +1,26 @@
-from shitcord.models.core import Model
+from ..models.core import Model
 
 
 class Role(Model):
     def __init__(self, data, http):
         super().__init__(data, http)
+        self._json = data
 
         self.hoist = data['hoist']
         self.name = data['name']
-        self.mentionable = bool(data['mentionable'])
-        self.color = int(data['color'])
-        self.position = int(data['position'])
-        self.id = int(data['id'])
-        self.managed = bool(data['managed'])
-        self.permissions = int(data['permissions'])
+        self.mentionable = data['mentionable']
+        self.color = data['color']
+        self.position = data['position']
+        self.id = data['id']
+        self.managed = data['managed']
+        self.permissions = data['permissions']
 
-    def to_json(self):
-        raise NotImplementedError('Ill do it later. "later"')
+    def to_json(self, **kwargs):
+        json = self._json
+        if kwargs:
+            json.update(kwargs)
+
+        return json
 
     def __repr__(self):
-        return '<shitcore.Role id=%d, name=%s>' % (self.id, self.name)
+        return '<shitcore.Role id={}, name={}>' .format(self.id, self.name)

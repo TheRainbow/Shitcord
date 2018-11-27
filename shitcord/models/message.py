@@ -20,13 +20,16 @@ class Message(Model):
         self.author = User(data['author'], http)
         self.mention_roles = data['mention_roles']
         self.content = data['content']
-        self.channel_id = data['channel_id']
         self.channel = _channel_from_payload(self._http.get_channel(data['channel_id']), self._http)
         self.mentions = data['mentions']
         self.type = data['type']
 
-    def to_json(self):
-        raise NotImplementedError('Ill do it later. "later"')
+    def to_json(self, **kwargs):
+        json = self._json
+        if kwargs:
+            json.update(kwargs)
+
+        return json
 
     def __repr__(self):
-        return '<shitcord.Message id=%d, author=%r, channel=%r, pinned=%r>' % (self.id, self.author, self.channel_id, self.pinned)
+        return '<shitcord.Message id={}, author={}, channel={}, pinned={}>'.format(self.id, self.author, self.channel.id, self.pinned)

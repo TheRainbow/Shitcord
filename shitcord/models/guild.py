@@ -21,13 +21,13 @@ class Guild(Model):
         self.embed_channel_id = data.get('embed_channel_id')
         self.splash = data['splash']
         self.emojis = [Emoji(emoji, http) for emoji in data['emojis']]
-        self.embed_enabled = data.get('embed_enabled', False)
+        self.embed_enabled = data.get('embed_enabled')
         self.owner_id = data['owner_id']
         self.owner = User(self._http.get_user(self.owner_id), http)
         self.mfa_level = data['mfa_level']
-        self.embed_enabled = data.get('embed_enabled', False)
+        self.embed_enabled = data.get('embed_enabled')
         self.system_channel_id = data['system_channel_id']
-        self.widget_enabled = data.get('widget_enabled', False)
+        self.widget_enabled = data.get('widget_enabled')
         self.icon = data['icon']
         self.name = data['name']
         self.roles = [role for role in data['roles']]
@@ -41,4 +41,4 @@ class Guild(Model):
         return json
 
     def __repr__(self):
-        return '<shitcore.Guild id=%d, name=%r>' % (self.id, self.name)
+        return '<shitcore.Guild id={}, name={}>'.format(self.id, self.name)
