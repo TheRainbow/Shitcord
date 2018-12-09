@@ -18,7 +18,6 @@ class HTTPCodes(Enum):
     NOT_EXTENDED                = 510
 
 
-
 class JSONCodes(Enum):
 
     UNKNOWN_ACCOUNT                                 = 10001
