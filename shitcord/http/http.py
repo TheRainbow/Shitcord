@@ -23,8 +23,8 @@ def parse_response(response):
 
 class HTTP:
     """
-    This represents a shitty HTTP client that wraps around the requests library and makes all the requests to the Discord API, handles rate limits
-    as well and parses the responses.
+    This represents a shitty HTTP client that wraps around the requests library and makes
+    all the requests to the Discord API, handles rate limits as well and parses the responses.
     """
 
     BASE_URL = 'https://discordapp.com/api/v6'
@@ -47,10 +47,10 @@ class HTTP:
 
     def make_request(self, route, fmt=None, **kwargs):
         """
-        Makes a request to a given endpoint with a shit set of arguments.
+        Makes a request to a given endpoint with a set of arguments.
 
         :param route:
-            `shitcord.http.Routes` is what you need. To make sure your endpoint is valid.
+            The route to perform the request.
         :param fmt:
             A dictionary containing all the necessary key-value-pairs to properly format the URL for the request.
         :param kwargs:
@@ -101,7 +101,7 @@ class HTTP:
             if retries > self.MAX_RETRIES:
                 raise ShitRequestFailedError(response, data, bucket, retries=self.MAX_RETRIES)
 
-            backoff = self.backoff()
+            backoff = randint(100, 50000) / 1000.0
             logger.debug(self.LOG_FAILED.format(bucket=bucket, url=url, code=status, error=response.content, seconds=backoff))
 
             gevent.sleep(backoff)
@@ -109,7 +109,7 @@ class HTTP:
 
     def make_iter_request(self, route, fmt=None, **kwargs):
         """
-        Makes a request to a given endpoint with a shit set of arguments.
+        Makes a request to a given endpoint with a set of arguments.
 
         The only difference to `make_request` is that this method will use
         iteration for the retries instead of recursion.
@@ -117,7 +117,7 @@ class HTTP:
         Mainly for experimental purposes on performance.
 
         :param route:
-            `shitcord.http.Routes` is what you need. To make sure your endpoint is valid.
+            The route to perform the request.
         :param fmt:
             A dictionary containing all the necessary key-value-pairs to properly format the URL for the request.
         :param kwargs:
@@ -169,9 +169,12 @@ class HTTP:
                     if retry > self.MAX_RETRIES:
                         raise ShitRequestFailedError(response, data, bucket, retries=self.MAX_RETRIES)
 
-                    backoff = self.backoff()
+                    backoff = randint(100, 50000) / 1000.0
                     logger.debug(self.LOG_FAILED.format(bucket=bucket, url=url, code=status, error=response.content, seconds=backoff))
                     gevent.sleep(backoff)
+
+            # When the total limit of retries was exceeded, raise an error.
+            raise ShitRequestFailedError(response, data, bucket, retries=self.MAX_RETRIES)
 
     def close(self):
         self._session.close()
@@ -180,12 +183,6 @@ class HTTP:
     def recreate(self, *, session=None):
         if not self._session:
             self._session = session or requests.Session()
-
-    @staticmethod
-    def backoff():
-        """Generates a random backoff that will be used as the delay before the lib retries to make a request to the Discord API."""
-
-        return randint(100, 50000) / 1000.0
 
     @staticmethod
     def create_user_agent():

@@ -1,4 +1,6 @@
-from shitcord.models.guild import Guild
+# -*- coding: utf-8 -*-
+
+from ..models.guild import Guild
 
 
 def store(client, obj):

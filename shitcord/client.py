@@ -1,7 +1,8 @@
 from collections import defaultdict
+import gevent
 
 from shitcord import API
-from shitcord import GatewayClient
+from shitcord import DiscordWebSocketClient
 from shitcord.models.guild import Guild
 from shitcord.utils.aliases import default_aliases
 from shitcord.utils.cache import Cache
@@ -11,7 +12,7 @@ class Client:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.api = None
-        self.gateway_client = None
+        self.ws = None
         self._aliases = default_aliases.copy()
         self.events = defaultdict(list)
         self._guilds = {}
@@ -35,9 +36,8 @@ class Client:
         """
 
         self.api = API(token)
-        self.gateway_client = GatewayClient.from_client(self)
-
-        self.gateway_client.join()
+        self.ws = DiscordWebSocketClient.from_client(self, zlib_compressed=False)
+        self.ws.run_forever()
 
     def on(self, event: str):
         """

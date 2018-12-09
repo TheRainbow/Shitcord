@@ -1,4 +1,4 @@
-from ..models.core import Model
+from shitcord.models.core import Model
 
 
 class Ready(Model):

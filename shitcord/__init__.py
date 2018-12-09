@@ -15,6 +15,7 @@ Though I think this lib could actually be pretty cool...
 # This has to be here because otherwise it may cause issues
 from gevent import monkey
 monkey.patch_all()
+del monkey
 
 import logging
 import sys

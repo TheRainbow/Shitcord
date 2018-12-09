@@ -1,7 +1,9 @@
-from enum import Enum
+# -*- coding: utf-8 -*-
+
+from enum import IntEnum
 
 
-class Opcodes(Enum):
+class Opcodes(IntEnum):
     DISPATCH                = 0
     HEARTBEAT               = 1
     IDENTIFY                = 2

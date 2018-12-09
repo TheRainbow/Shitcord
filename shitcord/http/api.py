@@ -5,7 +5,7 @@ import logging
 from contextlib import contextmanager
 from urllib.parse import quote
 
-from gevent.local import local
+import gevent
 
 from .http import HTTP
 from .routes import Endpoints
@@ -18,7 +18,7 @@ class API:
 
     def __init__(self, token):
         self.http = HTTP(token)
-        self._cache = local()
+        self._cache = gevent.local.local()
 
     @property
     def token(self):
@@ -634,13 +634,9 @@ class API:
     # ----------------------------------- Gateway ----------------------------------- #
 
     def get_gateway(self):
-        resp = self.make_request(Endpoints.GET_GATEWAY)
-        logger.debug("Received payload containing Gateway URL {}".format(resp['url']))
-
-        if not hasattr(self._cache, 'gateway'):
-            self._cache.gateway = resp['url']
-
-        return resp
+        return self.make_request(Endpoints.GET_GATEWAY)
 
     def get_gateway_bot(self):
-        return self.make_request(Endpoints.GET_GATEWAY_BOT)
+        response = self.make_request(Endpoints.GET_GATEWAY_BOT)
+
+        return response['url'], response['shards'], response['session_start_limit']

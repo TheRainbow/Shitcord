@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from ..models.core import Model, Snowflake
-from ..models.channel import _channel_from_payload
-from ..models.guild import Guild
-from ..models.user import User
-from ..models.message import Message
-from ..models.emoji import Emoji
-from ..models.role import Role
+from shitcord.models.core import Model, Snowflake
+from shitcord.models.channel import _channel_from_payload
+from shitcord.models.guild import Guild
+from shitcord.models.user import User
+from shitcord.models.message import Message
+from shitcord.models.emoji import Emoji
+from shitcord.models.role import Role
 
 
 __all__ = ['TypingStart', 'PresenceUpdate', 'MessageDelete', 'ChannelPinsUpdate', 'GuildMemberUpdate',

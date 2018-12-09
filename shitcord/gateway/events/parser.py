@@ -2,8 +2,8 @@ from ..events.error import InvalidEventException
 from ..events.event_models import *
 from ..events.parsers import ModelParser, NullParser
 from ..events.ready import Ready
-from ..models import *
-from ..models.channel import _channel_from_payload
+from shitcord.models import *
+from shitcord.models.channel import _channel_from_payload
 
 parsers = dict(
     guild_create=ModelParser(Guild),

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from enum import Enum
 
 
@@ -18,9 +19,7 @@ class HTTPCodes(Enum):
     NOT_EXTENDED                = 510
 
 
-
 class JSONCodes(Enum):
-
     UNKNOWN_ACCOUNT                                 = 10001
     UNKNOWN_APPLICATION                             = 10002
     UNKNOWN_CHANNEL                                 = 10003
