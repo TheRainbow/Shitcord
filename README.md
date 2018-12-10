@@ -20,7 +20,7 @@ _Though this library is incomplete yet, contributions are very appreciated!_
 # Installation
 For now, you can only install the dev branch which is constantly updated.
 ```
-pip install -U https://github.com/itsVale/Shitcord/archive/dev.zip
+pip install -U https://github.com/itsVale/Shitcord/archive/async.zip
 ```
 
 Shitcord already features the REST API and also the Discord Gateway. Though the lib is very
