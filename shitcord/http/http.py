@@ -9,31 +9,15 @@ from random import randint
 import trio
 import asks
 
-from .rate_limit import Limiter
 from .errors import ShitRequestFailed
+from .rate_limit import Limiter
 
 logger = logging.getLogger(__name__)
 asks.init(trio)
 
 
-def parse_response(response):
-    if response.headers['Content-Type'] == 'application/json':
-        return response.json()
-    return response.text.encode('utf-8')
-
-
 class HTTP:
-    """Represents an HTTP client that wraps around the asks library and performs requests to the Discord API.
-
-    Parameters
-    ----------
-    token : str
-        The application's token for authentication.
-    session : asks.Session, optional
-        An instance of `asks.Session` if a pre-existing session should be used.
-    application_type : str, optional
-        The application type for the current application. Defaults to 'Bot'.
-    """
+    """Represents an HTTP client that wraps around the asks library and performs requests to the Discord API."""
 
     BASE_URL = 'https://discordapp.com/api/v6'
     MAX_RETRIES = 5
@@ -42,9 +26,8 @@ class HTTP:
     LOG_FAILED = 'Request to {bucket} failed with status code {code}: {error}. Retrying after {seconds} seconds.'
 
     def __init__(self, token, **kwargs):
-        self._session = kwargs.get('session', asks.Session())
         self._token = token
-        self._lock = trio.Lock()
+        self._session = kwargs.get('session', asks.Session())
         self.limiter = Limiter()
 
         self.headers = {
@@ -73,6 +56,11 @@ class HTTP:
         -------
         dict
             The API's JSON response.
+
+        Raises
+        ------
+        ShitRequestFailed
+            Will be raised on request failure or when the total amount of possible retries was exceeded.
         """
 
         fmt = fmt or {}
@@ -95,7 +83,7 @@ class HTTP:
 
         url = self.BASE_URL + endpoint
         response = await self._session.request(method, url, **kwargs)
-        data = parse_response(response)
+        data = self.parse_response(response)
         status = response.status_code
 
         # Rate Limit stuff
@@ -123,6 +111,12 @@ class HTTP:
 
             # Recurse
             return await self.make_request(route, fmt, retries=retries, **kwargs)
+
+    @staticmethod
+    def parse_response(response):
+        if response.headers['Content-Type'] == 'application/json':
+            return response.json()
+        return response.text.encode('utf-8')
 
     @staticmethod
     def create_user_agent():

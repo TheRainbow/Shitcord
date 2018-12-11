@@ -79,10 +79,12 @@ class Limiter:
 
     def get_cooldown(self, resp):
         if resp.will_rate_limit:
+            # In this case, the next request is going to cause a rate limit.
             duration = resp.reset
             logger.debug('Next request is going to cause a rate limit. We wait for a Rate Limit Reset in %s seconds.', duration)
 
         elif resp.is_rate_limited:
+            # For this case, we are already rate-limited.
             duration = resp.retry_after
             logger.debug('You are being rate limited. We will retry it in %s seconds.', duration)
 
@@ -91,6 +93,7 @@ class Limiter:
                 logger.debug('Global rate limit has been exhausted.')
 
         else:
+            # We are neither rate-limited nor exhausted a rate limit bucket.
             duration = 0
 
         return duration, resp.global_limit
