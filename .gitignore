@@ -111,3 +111,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+Würde test.py löschen
