@@ -17,6 +17,7 @@ import sys
 from collections import namedtuple
 
 from .http import *
+from .models import *
 from .utils import *
 
 __title__ = 'Shitcord'
