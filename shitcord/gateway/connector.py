@@ -231,9 +231,13 @@ class DiscordWebSocketClient(WebSocketClient):
             is_json = message[0] == '{'
             is_etf = message[0] == 131
             if not is_json and not is_etf:
-                message = zlib.decompress(message, 15, 10490000).decode('utf-8')
+                try:
+                    message = zlib.decompress(message, 15, 10490000).decode('utf-8')
+                except zlib.error:
+                    # If the message is could not be decompressed by zlib, it's a normal utf-8 message
+                    message = message.decode('utf-8')
 
-        logger.info('After being decompressed: %s', message)
+        logger.debug('After being decompressed: %s', message)
 
         # Now decode the format of the payloads that was specified in the url for connecting.
         try:
@@ -242,7 +246,7 @@ class DiscordWebSocketClient(WebSocketClient):
             logger.debug('Failed to parse Gateway message %s', message)
             return
 
-        logger.info('After being decoded: %s', message)
+        logger.debug('After being decoded: %s', payload)
 
         # And now we update the sequence required for heartbeating and resumes.
         if payload['s'] and payload['s'] > self.sequence:
@@ -257,7 +261,7 @@ class DiscordWebSocketClient(WebSocketClient):
             event = payload['t']
             logger.debug('Received event dispatch %s', event)
 
-            self.emitter.emit(opcode.name.lower(), event, data)
+            self.emitter.emit(opcode.name, event.lower(), data)
             return
 
         self.emitter.emit(opcode.name, data)

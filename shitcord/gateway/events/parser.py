@@ -31,8 +31,8 @@ parsers = dict(
     guild_role_update=ModelParser(GuildRole),
     guild_role_delete=ModelParser(GuildRoleDelete),
     webhooks_update=ModelParser(WebhooksUpdate),
-    voice_state_update=ModelParser(VoiceStateUpdate),
-    presences_replace=ModelParser(PresencesReplace)
+    voice_state_update=ModelParser(NullParser),  # VoiceStateUpdate),
+    presences_replace=ModelParser(NullParser)  # PresencesReplace)
 )
 
 
