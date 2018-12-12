@@ -2,10 +2,9 @@
 
 import abc
 
-import erlastic
-
 try:
     import ujson as json
+    import erlastic
 except ImportError:
     import json
 
