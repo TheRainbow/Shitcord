@@ -1,12 +1,7 @@
+import time
 from collections import defaultdict
 
-import gevent
-
-from shitcord import API
-from shitcord import DiscordWebSocketClient
-from shitcord.models.guild import Guild
-from shitcord.utils.aliases import default_aliases
-from shitcord.utils.cache import Cache
+from . import Activity, API, DiscordWebSocketClient, Guild, Opcodes, StatusType, utils
 
 
 class Client:
@@ -14,10 +9,10 @@ class Client:
         self.kwargs = kwargs
         self.api = None
         self.ws = None
-        self._aliases = default_aliases.copy()
+        self._aliases = utils.aliases.default_aliases.copy()
         self.events = defaultdict(list)
         self._guilds = {}
-        self._message_cache = Cache()
+        self._message_cache = utils.cache.Cache()
 
     def _resolve_alias(self, event):
         return self._aliases.get(event, event)
@@ -39,6 +34,38 @@ class Client:
         self.api = API(token)
         self.ws = DiscordWebSocketClient.from_client(self)
         self.ws.run_forever()
+
+    def change_presence(self, *, activity: Activity = None, status: StatusType, afk=False, since=0.0):
+        """
+        Changes a bot's presence.
+        This sets a 'Playing ...'/'Listening to ...', whatever status visible in the
+        Discord client.
+
+        :param activity:
+            An `Activity` object containing all necessary information about the game.
+        :param status:
+            A valid `StatusType` denoting the bot's "action". E.g. playing, listening, streaming, watching...
+        :param afk:
+            Whether or not the bot should show up as afk.
+        """
+
+        if not isinstance(activity, Activity):
+            raise TypeError('Activity must be an Activity model.')
+
+        if status is StatusType.IDLE and not since:
+            since = int(time.time() * 1000)
+
+        payload = {
+            'since': since,
+            'game': None,
+            'status': status.name.lower(),
+            'afk': afk,
+        }
+
+        if activity:
+            payload['game'] = activity.to_json()
+
+        return self.ws.send(Opcodes.STATUS_UPDATE, payload)
 
     def on(self, event: str):
         """

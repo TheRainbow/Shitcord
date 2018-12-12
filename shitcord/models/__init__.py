@@ -3,6 +3,7 @@ from .user import User
 from .channel import *
 from .role import Role
 from .emoji import Emoji
+from .gateway import *
 from .guild import Guild
 from .message import Message
 from .webhook import Webhook
