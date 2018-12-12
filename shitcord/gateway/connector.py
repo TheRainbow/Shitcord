@@ -4,12 +4,10 @@ import shitcord
 
 import logging
 import zlib
-import json
 
 import gevent
 from eventemitter import EventEmitter
 from ws4py.client.geventclient import WebSocketClient
-from ws4py.messaging import TextMessage
 
 from .caching import store
 from .encoding import encoders
@@ -23,8 +21,6 @@ logger = logging.getLogger(__name__)
 
 ZLIB_SUFFIX = b'\x00\x00\xff\xff'
 none_func = lambda *a, **kw: None
-
-from shitcord.gateway.serialization import JSON
 
 
 class DiscordWebSocketClient(WebSocketClient):
@@ -206,44 +202,46 @@ class DiscordWebSocketClient(WebSocketClient):
             shard = [self.shard_id, self.shard_count]  # Currently only support for one shard.
             self._send(Opcodes.IDENTIFY, identify(self.client.api.token, shitcord.__title__, shard=shard))
 
-    def received_message(self, message: TextMessage):
-        message = message.data
-        logger.debug('Received message: %s', message)
+    def received_message(self, message):
+        msg = message.data
+        logger.debug('Received message: %s', msg)
 
         # First of all, detect zlib-compressed payloads and decompress them.
         if self.zlib_compressed:
-            self._buffer.extend(message)
+            if message.is_binary:
+                self._buffer.extend(msg)
 
-            if len(message) < 4 or message[-4:] != ZLIB_SUFFIX:
-                return
+                if len(msg) < 4 or msg[-4:] != ZLIB_SUFFIX:
+                    return
 
-            message = self._inflator.decompress(self._buffer)
-            # If our encoder isn't binary-based, decode the message as utf-8.
-            if not self.encoder.IS_BINARY:
-                message = message.decode('utf-8')
+                msg = self._inflator.decompress(self._buffer)
+                # If our encoder isn't binary-based, decode the message as utf-8.
+                if not self.encoder.IS_BINARY:
+                    msg = msg.decode('utf-8')
+                    print(msg)
 
-            # And reset our buffer after the stored data were retrieved.
-            self._buffer = bytearray()
+                # And reset our buffer after the stored data were retrieved.
+                self._buffer = bytearray()
 
         else:
             # As there are special cases where zlib-compressed payloads also occur, even
             # if zlib-stream wasn't specified in the Gateway url, also try to detect them.
-            is_json = message[0] == '{'
-            is_etf = message[0] == 131
+            is_json = msg[0] == '{'
+            is_etf = msg[0] == 131
             if not is_json and not is_etf:
                 try:
-                    message = zlib.decompress(message, 15, 10490000).decode('utf-8')
+                    msg = zlib.decompress(msg, 15, 10490000).decode('utf-8')
                 except zlib.error:
                     # If the message cannot be decompressed by zlib, it's a normal utf-8 message
-                    message = message.decode('utf-8')
+                    msg = msg.decode('utf-8')
 
-        logger.debug('After being decompressed: %s', message)
+        logger.debug('After being decompressed: %s', msg)
 
         # Now decode the format of the payloads that was specified in the url for connecting.
         try:
-            payload = self.encoder.decode(message)
+            payload = self.encoder.decode(msg)
         except Exception:
-            logger.debug('Failed to parse Gateway message %s', message)
+            logger.debug('Failed to parse Gateway message %s', msg)
             return
 
         logger.debug('After being decoded: %s', payload)
@@ -298,7 +296,7 @@ class DiscordWebSocketClient(WebSocketClient):
         logger.debug('Connection was closed. Attempt to %s in %s seconds.', action, delay)
         gevent.sleep(delay)
 
-        self.run_forever()
+        self.connect()
 
     def destroy(self):
         logger.debug('Shutting down the Gateway client.')
@@ -307,5 +305,5 @@ class DiscordWebSocketClient(WebSocketClient):
 
     def run_forever(self):
         logger.debug('Connecting to the Discord Gateway...')
-        self.connect()
+        gevent.spawn(self.connect)
         self._heartbeat_task.join()

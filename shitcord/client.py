@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 import gevent
 
 from shitcord import API
@@ -36,7 +37,7 @@ class Client:
         """
 
         self.api = API(token)
-        self.ws = DiscordWebSocketClient.from_client(self, zlib_compressed=False)
+        self.ws = DiscordWebSocketClient.from_client(self)
         self.ws.run_forever()
 
     def on(self, event: str):
