@@ -35,7 +35,7 @@ class Client:
         self.ws = DiscordWebSocketClient.from_client(self)
         self.ws.run_forever()
 
-    def change_presence(self, *, activity: Activity = None, status: StatusType, afk=False, since=0.0):
+    def change_presence(self, *, activity: Activity = None, status: StatusType = StatusType.ONLINE, afk=False, since=0.0):
         """
         Changes a bot's presence.
         This sets a 'Playing ...'/'Listening to ...', whatever status visible in the
