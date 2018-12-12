@@ -47,6 +47,8 @@ class Client:
             A valid `StatusType` denoting the bot's "action". E.g. playing, listening, streaming, watching...
         :param afk:
             Whether or not the bot should show up as afk.
+        :param since:
+            The given interval since when the bot started being afk.
         """
 
         if not isinstance(activity, Activity):
