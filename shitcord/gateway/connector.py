@@ -71,7 +71,7 @@ class DiscordWebSocketClient(WebSocketClient):
         self._heartbeat_task = gevent.spawn(self.__alive_handler)
 
         # Necessary for rate limit handling. It's actually 60, 120, but let's give us some buffer
-        self.limiter = gateway.Limiter(60, 125)
+        self.limiter = gateway.Limiter(2, 1)
 
         # Necessary for detecting zlib-compressed payloads
         self._buffer = bytearray()
@@ -132,10 +132,14 @@ class DiscordWebSocketClient(WebSocketClient):
 
     def _send(self, opcode, payload):
         logger.debug('Sending %s', payload)
-        self.send(self.encoder.encode({
+        super().send(self.encoder.encode({
             'op': opcode.value,
             'd': payload,
         }), self.encoder.IS_BINARY)
+
+    def send(self, opcode, payload):
+        self.limiter.check()
+        self._send(opcode, payload)
 
     def __alive_handler(self):
         while True:
@@ -270,6 +274,7 @@ class DiscordWebSocketClient(WebSocketClient):
     def closed(self, code, reason=None):
         # Clean up any old data
         self._buffer = bytearray()
+        self._heartbeat_task.kill()
 
         # If we're doing a manual shutdown, there's no need to reconnect.
         if self.shutting_down:
