@@ -1,6 +1,5 @@
+import re
 from setuptools import find_packages, setup
-
-from shitcord import __version__
 
 with open('README.md', encoding='utf-8') as f:
     readme = f.read()
@@ -8,12 +7,16 @@ with open('README.md', encoding='utf-8') as f:
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
+with open('shitcord/__init__.py', 'r') as f:
+    match = re.search(r'^__version__\s=\s\'(\d.\d.\d([ab])?)\'$', f.read(), re.MULTILINE)
+    version = match.group(1)
+
 # No extra requirements at the moment ¯\_(ツ)_/¯
 extra_requires = {}
 
 setup(
     name='Shitcord',
-    version=__version__,
+    version=version,
     author='Valentin B.',
     author_email='itisvale1@gmail.com',
     description='A framework to interact with the Discord API.',
