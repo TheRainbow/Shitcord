@@ -10,7 +10,7 @@ with open('requirements.txt', 'r') as f:
 
 # No extra requirements at the moment ¯\_(ツ)_/¯
 extra_requires = {
-    'performance': ['ujson', 'erlastic']
+    'performance': ['ujson>=1.35', 'erlastic>=2.0.0']
 }
 
 setup(
