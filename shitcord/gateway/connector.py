@@ -234,7 +234,7 @@ class DiscordWebSocketClient(WebSocketClient):
                 try:
                     message = zlib.decompress(message, 15, 10490000).decode('utf-8')
                 except zlib.error:
-                    # If the message is could not be decompressed by zlib, it's a normal utf-8 message
+                    # If the message cannot be decompressed by zlib, it's a normal utf-8 message
                     message = message.decode('utf-8')
 
         logger.debug('After being decompressed: %s', message)
