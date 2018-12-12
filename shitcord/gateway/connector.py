@@ -211,33 +211,9 @@ class DiscordWebSocketClient(WebSocketClient):
         logger.debug('Received message: %s', msg)
 
         # First of all, detect zlib-compressed payloads and decompress them.
-        if self.zlib_compressed:
-            if message.is_binary:
-                self._buffer.extend(msg)
-
-                if len(msg) < 4 or msg[-4:] != ZLIB_SUFFIX:
-                    return
-
-                msg = self._inflator.decompress(self._buffer)
-                # If our encoder isn't binary-based, decode the message as utf-8.
-                if not self.encoder.IS_BINARY:
-                    msg = msg.decode('utf-8')
-                    print(msg)
-
-                # And reset our buffer after the stored data were retrieved.
-                self._buffer = bytearray()
-
-        else:
-            # As there are special cases where zlib-compressed payloads also occur, even
-            # if zlib-stream wasn't specified in the Gateway url, also try to detect them.
-            is_json = msg[0] == '{'
-            is_etf = msg[0] == 131
-            if not is_json and not is_etf:
-                try:
-                    msg = zlib.decompress(msg, 15, 10490000).decode('utf-8')
-                except zlib.error:
-                    # If the message cannot be decompressed by zlib, it's a normal utf-8 message
-                    msg = msg.decode('utf-8')
+        msg = self.decompress(msg, message.is_binary)
+        if not msg:
+            return
 
         logger.debug('After being decompressed: %s', msg)
 
@@ -267,6 +243,35 @@ class DiscordWebSocketClient(WebSocketClient):
             return
 
         self.emitter.emit(opcode.name, data)
+
+    def decompress(self, message, is_binary):
+        if self.zlib_compressed:
+            if is_binary:
+                self._buffer.extend(message)
+                if len(message) < 4 or message[-4:] != ZLIB_SUFFIX:
+                    return
+
+                message = self._inflator.decompress(message)
+                # If our encoder isn't binary-based, decode the message as utf-8.
+                if not self.encoder.IS_BINARY:
+                    message = message.decode('utf-8')
+
+            # Reset the buffer
+            self._buffer = bytearray()
+
+        else:
+            # As there are special cases where zlib-compressed payloads also occur, even
+            # if zlib-stream wasn't specified in the Gateway url, also try to detect them.
+            is_json = message[0] == '{'
+            is_etf = message[0] == 131
+            if not is_json and not is_etf:
+                try:
+                    message = zlib.decompress(message, 15, 10490000).decode('utf-8')
+                except zlib.error:
+                    # If the message cannot be decompressed by zlib, it's a normal utf-8 message
+                    message = message.decode('utf-8')
+
+        return message
 
     def unhandled_error(self, error):
         raise GatewayException('An error occurred: {}'.format(error))
