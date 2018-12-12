@@ -36,7 +36,7 @@ import trio
 from shitcord.http import Endpoints, HTTP
 
 # Set up logging for receiving Shitcord's debug logs.
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('shitcord')
 logger.level = logging.DEBUG
 
 # Create an instance of the HTTP class that interfaces with the REST API.
