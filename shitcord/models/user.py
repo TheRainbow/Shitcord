@@ -15,7 +15,7 @@ class BaseUser(Model):
         self._json = data
         super().__init__(data.get('id'), http)
 
-        self.name = data.get('id')
+        self.name = data.get('username')
         self.discriminator = data.get('discriminator')
         self.avatar = data.get('avatar')
         self.bot = data.get('bot')
