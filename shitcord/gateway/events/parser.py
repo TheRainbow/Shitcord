@@ -1,6 +1,6 @@
 from ..events.error import InvalidEventException
 from ..events.event_models import *
-from ..events.parsers import ModelParser, NullParser
+from ..events.parsers import ModelParser
 from ..events.ready import Ready
 from shitcord.models import *
 from shitcord.models.channel import _channel_from_payload
@@ -31,8 +31,8 @@ parsers = dict(
     guild_role_update=ModelParser(GuildRole),
     guild_role_delete=ModelParser(GuildRoleDelete),
     webhooks_update=ModelParser(WebhooksUpdate),
-    voice_state_update=ModelParser(NullParser),  # VoiceStateUpdate),
-    presences_replace=ModelParser(NullParser)  # PresencesReplace)
+    voice_state_update=ModelParser(VoiceStateUpdate),
+    presences_replace=ModelParser(PresencesReplace)
 )
 
 

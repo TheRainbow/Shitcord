@@ -11,7 +11,7 @@ from shitcord.models.role import Role
 
 __all__ = ['TypingStart', 'PresenceUpdate', 'MessageDelete', 'ChannelPinsUpdate', 'GuildMemberUpdate',
            'MessageReaction', 'MessageReactionRemoveAll', 'GuildBan', 'GuildMemberRemove', 'GuildMemberAdd',
-           'GuildMemberChunk', 'GuildRole', 'GuildRoleDelete', 'WebhooksUpdate']
+           'GuildMemberChunk', 'GuildRole', 'GuildRoleDelete', 'WebhooksUpdate', 'VoiceStateUpdate', 'PresencesReplace']
 
 
 class TypingStart(Model):
@@ -262,4 +262,33 @@ class WebhooksUpdate(Model):
         if kwargs:
             json.update(kwargs)
 
+        return json
+
+
+class VoiceStateUpdate(Model):
+
+    def __init__(self, data, http):
+        super().__init__(0, http)
+        self._json = data
+        self.token = data['token']
+        self.guild = Guild(self._http.get_guild(data['guild_id'], self._http))
+        self.endpoint = data['endpoint']
+
+    def to_json(self, **kwargs):
+        json = self._json
+        if kwargs:
+            json.update(kwargs)
+        return json
+
+
+class PresencesReplace(Model):
+
+    def __init__(self, data, http):
+        super().__init__(0, http)
+        self._json = data
+
+    def to_json(self, **kwargs):
+        json = self._json
+        if kwargs:
+            json.update(kwargs)
         return json

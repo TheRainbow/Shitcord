@@ -1,5 +1,6 @@
 from ..models.core import Model
 from ..models.user import User
+from ..models.guild import Guild
 from ..models.channel import _channel_from_payload
 
 
@@ -23,6 +24,7 @@ class Message(Model):
         self.channel = _channel_from_payload(self._http.get_channel(data['channel_id']), self._http)
         self.mentions = data['mentions']
         self.type = data['type']
+        self.guild = Guild(self._http.get_guild(data['guild_id']), self._http) if data.get('guild_id') else None
 
     def to_json(self, **kwargs):
         json = self._json
