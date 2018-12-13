@@ -72,10 +72,8 @@ class Limiter:
 
             if global_limit:
                 with trio.move_on_after(duration):
-                    try:
-                        self.no_global_limit.clear()
-                    finally:
-                        self.no_global_limit.set()
+                    self.no_global_limit.clear()
+                self.no_global_limit.set()
 
     @staticmethod
     def get_cooldown(resp):
