@@ -19,7 +19,7 @@ asks.init(trio)
 class HTTP:
     """Represents an HTTP client that wraps around the asks library and performs requests to the Discord API."""
 
-    BASE_URL = 'https://discordapp.com/api/v6'
+    BASE_URL = 'https://discordapp.com/api/v7'
     MAX_RETRIES = 5
 
     LOG_SUCCESS = 'Gratz! {bucket} ({url}) has received {text}!'

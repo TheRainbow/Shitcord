@@ -77,7 +77,8 @@ class Limiter:
                     finally:
                         self.no_global_limit.set()
 
-    def get_cooldown(self, resp):
+    @staticmethod
+    def get_cooldown(resp):
         if resp.will_rate_limit:
             # In this case, the next request is going to cause a rate limit.
             duration = resp.reset
