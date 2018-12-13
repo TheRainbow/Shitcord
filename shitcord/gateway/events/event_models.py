@@ -11,7 +11,8 @@ from shitcord.models.role import Role
 
 __all__ = ['TypingStart', 'PresenceUpdate', 'MessageDelete', 'ChannelPinsUpdate', 'GuildMemberUpdate',
            'MessageReaction', 'MessageReactionRemoveAll', 'GuildBan', 'GuildMemberRemove', 'GuildMemberAdd',
-           'GuildMemberChunk', 'GuildRole', 'GuildRoleDelete', 'WebhooksUpdate', 'VoiceStateUpdate', 'PresencesReplace']
+           'GuildMemberChunk', 'GuildRole', 'GuildRoleDelete', 'WebhooksUpdate', 'VoiceStateUpdate', 'PresencesReplace',
+           'MessageUpdate']
 
 
 class TypingStart(Model):
@@ -107,6 +108,37 @@ class GuildMemberUpdate(Model):
             json.update(kwargs)
 
         return json
+
+
+class MessageUpdate(Model):
+    def __init__(self, data, http):
+        super().__init__(data, http)
+        self._json = data
+
+        self.response = data
+        self.attachments = data.get('attachments')
+        self.tts = data.get('tts')
+        self.embeds = data.get('embeds')
+        self.timestamp = data.get('timestamp')
+        self.mention_everyone = data.get('mention_everyone')
+        self.id = data['id']
+        self.pinned = data.get('pinned')
+        self.edited_timestamp = data.get('edited_timestamp')
+        self.author = User(data['author'], http) if data.get('author') else None
+        self.mention_roles = data.get('mention_roles')
+        self.content = data.get('content')
+        self.channel = _channel_from_payload(self._http.get_channel(data['channel_id']), self._http)
+        self.mentions = data.get('mentions')
+        self.type = data.get('type')
+        self.guild = Guild(self._http.get_guild(data['guild_id']), self._http) if data.get('guild_id') else None
+
+    def to_json(self, **kwargs):
+        json = self._json
+        if kwargs:
+            json.update(kwargs)
+
+        return json
+
 
 
 class MessageReaction(Model):
