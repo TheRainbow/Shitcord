@@ -48,6 +48,20 @@ class BaseChannel(Model):
     def __repr__(self):
         raise NotImplementedError
 
+    def to_json(self, **kwargs):
+        payload = self._json
+        if kwargs:
+            payload.update(**kwargs)
+
+        attrs = list(filter(lambda attr: not attr.startswith('_') and not callable(getattr(self, attr)), dir(self)))
+        for key in payload.keys():
+            if key not in attrs:
+                continue
+
+            payload[key] = getattr(self, key)
+
+        return payload
+
 
 class PartialChannel(BaseChannel):
     """Represents a PartialChannel model from the Discord API.

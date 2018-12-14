@@ -72,3 +72,7 @@ class Model(abc.ABC):
 
     def __setattr__(self, key, value):
         return object.__setattr__(self, key, value)
+
+    @abc.abstractmethod
+    def to_json(self, **kwargs):
+        pass
