@@ -174,18 +174,22 @@ class EventEmitter:
             The event that should be waited for.
         timeout : int, float, optional
             The timeout after which the function should error.
+
+        Raises
+        ------
+        trio.TooSlowError
+            Will be raised when the timeout was exceeded without any results.
         """
 
         data = None
         event = trio.Event()
 
-        def callback(*args):
+        async def callback(*args):
             nonlocal data, event
             data = args[0] if len(args) == 1 else args
             event.set()
 
         self.add_listener(name, callback, recurring=False)
-        with trio.move_on_after(timeout):
+        with trio.fail_after(timeout):
             await event.wait()
-
         return data
