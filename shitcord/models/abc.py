@@ -77,5 +77,5 @@ class GuildChannel(metaclass=abc.ABCMeta):
     Methods
     -------
     """
-    
+
     __slots__ = ()
