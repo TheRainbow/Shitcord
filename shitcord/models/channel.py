@@ -60,6 +60,7 @@ class BaseChannel(Model):
 
             payload[key] = getattr(self, key)
 
+        self._json = payload
         return payload
 
 
