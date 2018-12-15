@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class Model(ABC):
     def __init__(self, id, http):
-        self.id = id
+        self.id = int(id)
         self._http = http
 
     def __eq__(self, other):
