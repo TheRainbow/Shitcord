@@ -3,6 +3,7 @@
 import enum
 from datetime import datetime
 
+from . import abc
 from .base import Model
 
 __all__ = ['_channel_from_payload', 'TextChannel', 'DMChannel', 'VoiceChannel', 'GroupDMChannel', 'CategoryChannel']
@@ -64,7 +65,7 @@ class BaseChannel(Model):
         return payload
 
 
-class PartialChannel(BaseChannel):
+class PartialChannel(BaseChannel, abc.Sendable):
     """Represents a PartialChannel model from the Discord API.
 
     PartialChannels are very incomplete and thin Channel representations
@@ -93,7 +94,7 @@ class PartialChannel(BaseChannel):
         return '<shitcord.PartialChannel id={} name={}>'.format(self.id, self.name)
 
 
-class TextChannel(BaseChannel):
+class TextChannel(BaseChannel, abc.GuildChannel, abc.Sendable):
     """Represents a TextChannel model from the Discord API.
 
     TextChannel is a very common channel type. As the name says,
@@ -145,7 +146,7 @@ class TextChannel(BaseChannel):
         return '<shitcord.TextChannel id={} name={} guild_id={} nsfw={}>'.format(self.id, self.name, self.guild_id, self.nsfw)
 
 
-class DMChannel(BaseChannel):
+class DMChannel(BaseChannel, abc.PrivateChannel, abc.Sendable):
     """Represents a DMChannel model from the Discord API.
 
     This channel type represents a private channel between 2 `User`s.
@@ -175,7 +176,7 @@ class DMChannel(BaseChannel):
         return '<shitcord.DMChannel id={}>'.format(self.id)
 
 
-class VoiceChannel(BaseChannel):
+class VoiceChannel(BaseChannel, abc.Connectable, abc.GuildChannel):
     """Represents a VoiceChannel model from the Discord API.
 
     VoiceChannels are channels, Users can connect to and transmit audio.
@@ -219,7 +220,7 @@ class VoiceChannel(BaseChannel):
         return '<shitcord.VoiceChannel id={} name={} bitrate={} user_limit={}>'.format(self.id, self.name, self.bitrate, self.user_limit)
 
 
-class GroupDMChannel(BaseChannel):
+class GroupDMChannel(BaseChannel, abc.PrivateChannel, abc.Sendable):
     """Represents a GroupDMChannel model from the Discord API.
 
     This is actually quite similar to `DMChannel` except that `User`s can
@@ -262,7 +263,7 @@ class GroupDMChannel(BaseChannel):
         return '<shitcord.GroupDMChannel id={} name={} owner_id={}>'.format(self.id, self.name, self.owner_id)
 
 
-class CategoryChannel(BaseChannel):
+class CategoryChannel(BaseChannel, abc.GuildChannel):
     """Represents a CategoryChannel model from the Discord API.
 
     Categories always belong to a `Guild`.
