@@ -48,7 +48,7 @@ class Model(abc.ABC):
 
     def __init__(self, model_id=0, *, http):
         self._json = None
-        self.id = model_id
+        self.id = int(model_id)
         self._http = http
 
     @maybe_impossible
