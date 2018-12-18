@@ -120,7 +120,7 @@ class EventEmitter:
 
         Raises
         ------
-        EmitError
+        EventError
             Will be raised when an unregistered event was emitted.
         """
 
@@ -156,7 +156,7 @@ class EventEmitter:
 
         Raises
         ------
-        EmitError
+        EventError
             Will be raised when an unregistered event was emitted.
         """
 
