@@ -6,7 +6,7 @@ from .snowflake import Snowflake
 
 
 class Model(abc.ABC):
-    """Represents an Abstract Base Class for all models in this library.
+    """Represents an Abstract Base Class for most models in this library.
 
     Most of this library's implementations of the Discord API models implement
     this ABC which mainly provides some core functionality.

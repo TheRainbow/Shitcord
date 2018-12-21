@@ -20,8 +20,6 @@ def _get_as_datetime(payload, key):
     item = payload.get(key)
     if not item:
         return None
-    if type(item) is str:
-        return item
 
     return datetime.utcfromtimestamp(item)
 
@@ -41,6 +39,8 @@ class BaseChannel(Model):
     type : int
         An integer representing the channel type.
     """
+
+    __slots__ = ('snowflake', 'id', '_json', 'type')
 
     def __init__(self, data, http):
         self._json = data
