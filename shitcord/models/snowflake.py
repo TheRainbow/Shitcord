@@ -16,6 +16,19 @@ class Snowflake:
     ----------
     snowflake : int
         The Snowflake ID to initialize this class with.
+
+    Attributes
+    ----------
+    binary : str
+        A string representing the Snowflake's binary representation.
+    timestamp : datetime
+        An offset-naive datetime object representing the Snowflake's creation time.
+    worker_id : int
+        The Worker ID that belongs to the Snowflake.
+    process_id : int
+        The Process ID that belongs to the Snowflake.
+    increment : int
+        The increment that belongs to the Snowflake.
     """
 
     __slots__ = ('snowflake', 'binary', 'timestamp', 'worker_id', 'process_id', 'increment')
