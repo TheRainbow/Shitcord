@@ -34,6 +34,8 @@ class BaseChannel(Model):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A :class:`Snowflake` object that represents the model's ID.
     id : int
         The channel's ID.
     type : int
@@ -73,6 +75,8 @@ class PartialChannel(BaseChannel, abc.Sendable):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A :class:`Snowflake` object that represents the model's ID.
     id : int, optional
         The channel's ID.
     type : int
@@ -102,6 +106,8 @@ class TextChannel(BaseChannel, abc.GuildChannel, abc.Sendable):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A :class:`Snowflake` object that represents the model's ID.
     id : int
         The channel's ID.
     type : int
@@ -153,6 +159,8 @@ class DMChannel(BaseChannel, abc.PrivateChannel, abc.Sendable):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A :class:`Snowflake` object that represents the model's ID.
     id : int
         The channel's ID.
     type : int
@@ -185,6 +193,8 @@ class VoiceChannel(BaseChannel, abc.Connectable, abc.GuildChannel):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A :class:`Snowflake` object that represents the model's ID.
     id : int
         The channel's ID.
     type : int
@@ -228,6 +238,8 @@ class GroupDMChannel(BaseChannel, abc.PrivateChannel, abc.Sendable):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A :class:`Snowflake` object that represents the model's ID.
     id : int
         The channel's ID.
     type : int
@@ -272,6 +284,8 @@ class CategoryChannel(BaseChannel, abc.GuildChannel):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A :class:`Snowflake` object that represents the model's ID.
     id : int
         The channel's ID.
     type : int
