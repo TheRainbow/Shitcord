@@ -13,6 +13,8 @@ class Model(abc.ABC):
 
     Attributes
     ----------
+    snowflake: Snowflake
+        A Snowflake object that represents the model's ID.
     id : int
         The ID of the model. This should always be retrieved from the Discord API.
         For the case a model doesn't have an ID, defaults to 0.
