@@ -20,7 +20,7 @@ class Snowflake:
 
     __slots__ = ('snowflake', 'binary', 'timestamp', 'worker_id', 'process_id', 'increment')
 
-    def __init__(self, snowflake):
+    def __init__(self, snowflake: int):
         self.snowflake = snowflake
 
         self.binary = bin(self.snowflake)[2:].zfill(8)
