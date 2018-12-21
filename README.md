@@ -17,7 +17,7 @@
 
 _Though this library is incomplete yet, contributions are very appreciated!_
 
-# Installation
+## Installation
 For now, you can only install the dev branch which is constantly updated.
 ```
 pip install -U https://github.com/itsVale/Shitcord/archive/async.zip
@@ -28,7 +28,7 @@ incomplete at this moment what you can see from the code below.
   
 __Note that this branch features an asynchronous version of Shitcord that hasn't got a Gateway implementation yet.__
 
-# Usage
+## Usage
 ```python
 import logging
 
@@ -57,5 +57,5 @@ async def spam_the_api(channel_id: int):
 trio.run(spam_the_api, channel_id)
 ```
 
-# Support
+## Support
 Need help with something or just want to hang out with more or less cool guys? [Join our cool Discord server!](https://discord.gg/HbKGrVT)
