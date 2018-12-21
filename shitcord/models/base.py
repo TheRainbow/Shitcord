@@ -2,7 +2,7 @@
 
 import abc
 
-from ..utils import Snowflake
+from .snowflake import Snowflake
 
 
 class Model(abc.ABC):
