@@ -48,6 +48,17 @@ class Model(abc.ABC):
     def __setattr__(self, key, value):
         object.__setattr__(self, key, value)
 
-    @abc.abstractmethod
     def to_json(self, **kwargs):
-        pass
+        payload = self._json
+        if kwargs:
+            payload.update(**kwargs)
+
+        attrs = list(filter(lambda attr: not attr.startswith('_') and not callable(getattr(self, attr)), dir(self)))
+        for key in payload.keys():
+            if key not in attrs:
+                continue
+
+            payload[key] = getattr(self, key)
+
+        self._json = payload
+        return payload
