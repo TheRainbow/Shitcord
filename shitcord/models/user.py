@@ -83,7 +83,7 @@ class _BaseUser(Model, abc.DiscordUser):
 
 class User(_BaseUser):
     def __init__(self, data, http):
-        super().__init__(data['id'], http)
+        super().__init__(data, http)
 
         self.bot = data.get('bot', False)
         self.mfa_enabled = data.get('mfa_enabled', False)
