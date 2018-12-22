@@ -81,7 +81,7 @@ class _BaseUser(Model, abc.DiscordUser):
         return cdn.format_url(cdn.Endpoints.USER_AVATAR, dict(user=self.id, hash=self.avatar_hash), image_format=fmt, size=size, animated=animated)
 
 
-class User(_BaseUser, abc.DiscordUser):
+class User(_BaseUser):
     def __init__(self, data, http):
         super().__init__(data['id'], http)
 
