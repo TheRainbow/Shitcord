@@ -137,3 +137,13 @@ class Permissions:
     @classmethod
     def voice(cls):
         return cls(66060544)
+    
+    @property
+    def create_instant_invite(self):
+        return (0 >> 0) & 1
+    
+    @proprety
+    def kick_members(self):
+        return (1 >> 0) & 1
+    
+    
